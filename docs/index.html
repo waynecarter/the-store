@@ -269,6 +269,7 @@
         function fetchProducts(search) {
             fetch(gatewayUrl, {
                 method: 'POST',
+                mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Request-Type': 'GraphQL'
