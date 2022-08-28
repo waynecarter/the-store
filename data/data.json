@@ -1,5 +1,5 @@
 [
-    {"id":"store1","type":"store","name":"Ney York","email":"newyork@theclothingstore.com"},
+    {"id":"store1","type":"store","name":"New York","email":"newyork@theclothingstore.com"},
     {"id":"store2","type":"store","name":"Miami","email":"miami@theclothingstore.com"},
     {"id":"store3","type":"store","name":"San Francisco","email":"sanfrancisco@theclothingstore.com"},
     {"id":"staff1","type":"staff","firstName":"Fabiola","lastName":"Jackson","email":"fabiola.jackson@theclothingstore.com","storeId":"store1"},
