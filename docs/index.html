@@ -10,9 +10,8 @@
         html, body {
             font-size: 17px;
             font-family: "SF Pro Text","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
-            background-color: #fff;
+            background-color: white;
             color: black;
-            font-style: normal;
             height: 100%;
             width: 100%;
             margin: 0;
@@ -21,31 +20,29 @@
         }
 
         #main {
-            display: flex;
-            flex-direction: column;
             height: 100%;
             width: 100%;
         }
 
         header {
-            display: flex;
-            align-items: center;
-            flex-direction: row;
-            padding: 22px 44px 11px 44px;
+            height: 80px;
+            width: 100%;
         }
-
+        
         header > .title {
-            font-size: 1.8em;
-            flex-grow: 1;
-            flex-shrink: 1;
+            font-size: 32px;
+            position: absolute;
+            top: 20px;
+            left: 40px;
         }
 
         header > a {
-            flex-basis: 40px;
-            flex-shrink: 0;
+            display: inline-block;
+            position: absolute;
+            top: 20px;
+            right: 40px;
             height: 40px;
             width: 40px;
-            box-sizing: border-box;
             text-align: center;
         }
 
@@ -56,6 +53,7 @@
 
         header > #cartButton {
             padding-top: 15px;
+            box-sizing: border-box;
             background-image: url(images/bag.svg);
             background-repeat: no-repeat;
             background-position: center;
@@ -67,7 +65,7 @@
             left: 50%;
             transform: translate(-50%, 0);
             box-sizing: border-box;
-            margin: 11px 0;
+            margin: 10px 0;
         }
 
         #search > .inputText {
@@ -101,27 +99,26 @@
         }
 
         #main > .content {
-            display: flex;
-            flex-direction: row;
+            display:flex;
             flex-wrap: wrap;
-            gap: 60px 0;
+            row-gap: 80px;
+            height: calc(100vh - 80px);
+            padding: 80px 20px 20px 20px;
             box-sizing: border-box;
-            padding: 88px 22px 22px 22px;
             overflow-y: auto;
         }
 
-        #main > .content > * {
-            flex-basis: 200px;
+        .product {
+            display: inline-block;
             flex-grow: 1;
             flex-shrink: 1;
-        }
-
-        .product {
+            width: max(calc(25vw - 14px), 200px);
             text-align: center;
         }
 
         .product > p {
             font-size: 15vw;
+            box-sizing: border-box;
             margin-block-start: 0;
             margin-block-end: 0;
         }
@@ -214,12 +211,12 @@
 <body onload="init()">
     <section id="main">
         <header>
-            <div class="title"><b>The</b> Retail Store</div>
+            <span class="title"><b>The</b> Retail Store</span>
             <a id="cartButton" onclick="cart.show();"></a>
         </header>
         <div class="search-container">
             <div id="search">
-                <input class="inputText" type="text" placeholder="Search" onkeydown="search_onKeyDown();" oninput="search_onInput();"></input>
+                <input class="inputText" type="text" placeholder="Filter" onkeydown="search_onKeyDown();" oninput="search_onInput();"></input>
                 <a class="clearButton" onclick="clearSearch();">✕</a>
             </div>
         </div>
