@@ -296,7 +296,7 @@
                 return response.json();
             })
             .then(function(result) {
-                const products = result.data ? result.data.products || [] : ;
+                const products = result.data ? result.data.products || [] :  [];
                 catalog.setProducts(products, search);
             });
         }
