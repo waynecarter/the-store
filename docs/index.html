@@ -25,22 +25,24 @@
         }
 
         header {
-            height: 80px;
+            height: 60px;
             width: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
         }
         
         header > .title {
             font-size: 32px;
             position: absolute;
-            top: 20px;
-            left: 40px;
+            top: 10px;
+            left: 20px;
         }
 
         header > a {
             display: inline-block;
             position: absolute;
-            top: 20px;
-            right: 40px;
+            top: 10px;
+            right: 20px;
             height: 40px;
             width: 40px;
             text-align: center;
@@ -60,12 +62,8 @@
         }
 
         #search {
-            position: absolute;
-            z-index: 1;
-            left: 50%;
-            transform: translate(-50%, 0);
             box-sizing: border-box;
-            margin: 10px 0;
+            margin: 20px 0 20px calc(50% - 100px);
         }
 
         #search > .inputText {
@@ -74,8 +72,6 @@
             padding: 10px 32px 10px 10px;
             font: inherit;
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(8px);
             border-radius: 10px;
             border-color: rgb(220, 220, 220);
             border-style: solid;
@@ -98,17 +94,23 @@
             color: rgb(200, 200, 200);
         }
 
-        #main > .content {
+        #main > .content-container {
+            position: absolute;
+            top: 0;
+            overflow-y: auto;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            box-sizing: border-box;
+            height: 100vh;
+        }
+
+        #main .content {
             display:flex;
             flex-wrap: wrap;
             row-gap: 80px;
-            height: calc(100vh - 80px);
-            padding: 80px 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
         }
 
-        #main > .content > * {
+        #main .content > * {
             display: inline-block;
             flex-basis: max(calc(25vw - 14px), 200px);;
             flex-grow: 1;
@@ -213,22 +215,24 @@
 
 <body onload="init()">
     <section id="main">
+        <div class="content-container">
+            <div>
+                <div id="search">
+                    <input class="inputText" type="text" placeholder="Filter" onkeydown="search_onKeyDown();" oninput="search_onInput();"></input>
+                    <a class="clearButton" onclick="clearSearch();">✕</a>
+                </div>
+            </div>
+            <article class="content"></article>
+        </div>
         <header>
             <span class="title"><b>The</b> Retail Store</span>
             <a id="cartButton" onclick="cart.show();"></a>
         </header>
-        <div class="search-container">
-            <div id="search">
-                <input class="inputText" type="text" placeholder="Filter" onkeydown="search_onKeyDown();" oninput="search_onInput();"></input>
-                <a class="clearButton" onclick="clearSearch();">✕</a>
-            </div>
-        </div>
-        <article class="content"></article>
     </section>
 
     <div id="cart">
         <header>
-            <div class="title">Shopping Bag</div>
+            <div class="title"><b>The</b> Shopping Bag</div>
             <a class="closeButton" onclick="cart.hide();">✕</a>
         </header>
         <article class="content"></article>
@@ -273,37 +277,52 @@
         }
 
         function fetchProducts(search) {
-            fetch(gatewayUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Request-Type': 'GraphQL',
-                    'Authorization': 'Basic ' + btoa('admin:password')
-                },
-                body: JSON.stringify({
-                    query: `
-                        query products($search: String) {
-                            products(search: $search, offset:0, limit:20) {
-                                id,
-                                name,
-                                image,
-                                price
-                            }
-                        }
-                    `,
-                    variables: {
-                        search: search
-                    },
-                }),
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(result) {
-                const products = result.data ? result.data.products || [] : [];
-                catalog.setProducts(products, search);
-            });
+            catalog.setProducts([
+                {"id":"product1","type":"product","name":"Shirt","image":"👕","price":150},
+                {"id":"product2","type":"product","name":"Jeans","image":"👖","price":400},
+                {"id":"product3","type":"product","name":"Blouse","image":"👚","price":150},
+                {"id":"product4","type":"product","name":"Dress","image":"👗","price":400},
+                {"id":"product5","type":"product","name":"Shorts","image":"🩳","price":300},
+                {"id":"product6","type":"product","name":"Swimsuit","image":"🩱","price":300},
+                {"id":"product7","type":"product","name":"Briefs","image":"🩲","price":200},
+                {"id":"product8","type":"product","name":"Bikini","image":"👙","price":200},
+                {"id":"product9","type":"product","name":"Socks","image":"🧦","price":40},
+                {"id":"product10","type":"product","name":"Hat","image":"🧢","price":200},
+                {"id":"product11","type":"product","name":"Scarf","image":"🧣","price":300},
+                {"id":"product12","type":"product","name":"Gloves","image":"🧤","price":200}
+            ], search);
+
+            // fetch(gatewayUrl, {
+            //     method: 'POST',
+            //     mode: 'cors',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-Request-Type': 'GraphQL',
+            //         'Authorization': 'Basic ' + btoa('admin:password')
+            //     },
+            //     body: JSON.stringify({
+            //         query: `
+            //             query products($search: String) {
+            //                 products(search: $search, offset:0, limit:20) {
+            //                     id,
+            //                     name,
+            //                     image,
+            //                     price
+            //                 }
+            //             }
+            //         `,
+            //         variables: {
+            //             search: search
+            //         },
+            //     }),
+            // })
+            // .then(function(response) {
+            //     return response.json();
+            // })
+            // .then(function(result) {
+            //     const products = result.data ? result.data.products || [] : [];
+            //     catalog.setProducts(products, search);
+            // });
         }
 
         const catalog = new class Catalog {
