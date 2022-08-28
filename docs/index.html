@@ -27,11 +27,8 @@
         header {
             height: 60px;
             width: 100%;
-            /* background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px); */
-            background-color: red;
         }
-        
+
         header > .title {
             font-size: 32px;
             position: absolute;
@@ -64,7 +61,9 @@
 
         #search {
             box-sizing: border-box;
-            margin: 20px 0 20px calc(50% - 100px);
+            margin: auto;
+            margin-bottom: 20px;
+            width: 250px;
         }
 
         #search > .inputText {
@@ -96,13 +95,11 @@
         }
 
         #main > .content-container {
-            position: absolute;
-            top: 0;
             overflow-y: auto;
-            padding-top: 60px;
+            padding-top: 20px;
             padding-bottom: 60px;
             box-sizing: border-box;
-            height: 100vh;
+            height: calc(100vh - 60px);
         }
 
         #main .content {
@@ -216,6 +213,10 @@
 
 <body onload="init()">
     <section id="main">
+        <header>
+            <span class="title"><b>The</b> Retail Store</span>
+            <a id="cartButton" onclick="cart.show();"></a>
+        </header>
         <div class="content-container">
             <div>
                 <div id="search">
@@ -225,10 +226,6 @@
             </div>
             <article class="content"></article>
         </div>
-        <header>
-            <span class="title"><b>The</b> Retail Store</span>
-            <a id="cartButton" onclick="cart.show();"></a>
-        </header>
     </section>
 
     <div id="cart">
