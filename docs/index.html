@@ -103,16 +103,19 @@
             flex-wrap: wrap;
             row-gap: 80px;
             height: calc(100vh - 80px);
-            padding: 80px 20px 20px 20px;
+            padding: 80px 20px;
             box-sizing: border-box;
             overflow-y: auto;
         }
 
-        .product {
+        #main > .content > * {
             display: inline-block;
+            flex-basis: max(calc(25vw - 14px), 200px);;
             flex-grow: 1;
             flex-shrink: 1;
-            width: max(calc(25vw - 14px), 200px);
+        }
+
+        .product {
             text-align: center;
         }
 
