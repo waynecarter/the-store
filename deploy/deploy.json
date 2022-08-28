@@ -1,0 +1,7 @@
+{
+    "host": "localhost",
+    "database": {
+        "name": "retail",
+        "bucket": "retail"
+    }
+}

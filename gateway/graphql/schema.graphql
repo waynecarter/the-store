@@ -1,0 +1,10 @@
+type Product {
+    id: ID!
+    name: String!
+    image: String!
+    price: Float!
+}
+
+type Query {
+    products(search: String, offset: Int, limit: Int): [Product]
+}

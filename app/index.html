@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>The Retail Store</title>
+    <meta charset="UTF-8" />
+
+    <style>
+        html, body {
+            font-size: 17px;
+            font-family: "SF Pro Text","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+            background-color: #fff;
+            color: black;
+            font-style: normal;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #main {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            padding: 22px 44px 11px 44px;
+        }
+
+        header > .title {
+            font-size: 1.8em;
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        header > a {
+            flex-basis: 40px;
+            flex-shrink: 0;
+            height: 40px;
+            width: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        header > a:hover {
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        header > #cartButton {
+            padding-top: 15px;
+            background-image: url(images/bag.svg);
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #search {
+            position: absolute;
+            z-index: 1;
+            left: 50%;
+            transform: translate(-50%, 0);
+            box-sizing: border-box;
+            margin: 11px 0;
+        }
+
+        #search > .inputText {
+            box-sizing: border-box;
+            width: 250px;
+            padding: 10px 32px 10px 10px;
+            font: inherit;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            border-color: rgb(220, 220, 220);
+            border-style: solid;
+            border-width: thin;
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+        }
+
+        #search > .clearButton {
+            display: none;
+            position: absolute;
+            right: 11px;
+            top: 11px;
+            cursor: pointer;
+        }
+
+        #search > inputText::placeholder {
+            color: rgb(200, 200, 200);
+        }
+
+        #main > .content {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 60px 0;
+            box-sizing: border-box;
+            padding: 66px 22px 22px 22px;
+            overflow-y: auto;
+        }
+
+        #main > .content > * {
+            flex-basis: 200px;
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        .product {
+            text-align: center;
+        }
+
+        .product > p {
+            font-size: 15vw;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+
+        .product > h2 {
+            font-weight: 500;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+
+        .product > h3 {
+            font-weight: 400;
+            margin-block-start: 0;
+            margin-block-end: 0.5em;
+        }
+
+        #cart {
+            box-sizing: border-box;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            background-color: white;
+        }
+
+        header > .closeButton {
+            font-size: 2em;
+        }
+
+        #cart > .close:hover {
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        #cart > .content {
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 80px;
+            width: 100vw;
+            height: calc(100vh - 80px);
+            overflow: auto;
+            padding: 22px 44px 22px 44px;
+        }
+
+        #cart > .content > .item {
+            font-size: 3em;
+        }
+
+        #cart > .content button {
+            margin-top: 48px;
+        }
+
+        #cart > .content h1 {
+            margin-block-start: 10px;
+            margin-block-end: 0;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+
+        button {
+            border-radius: 0.5em;
+            box-sizing: border-box;
+            font-size: 1em;
+            font-weight: 400;
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            padding: 0.6em 1.1em;
+            color: white;
+            background-color: rgb(0, 113, 227);
+            border: 0;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body onload="init()">
+    <section id="main">
+        <header>
+            <div class="title"><b>The</b> Retail Store</div>
+            <a id="cartButton" onclick="cart.show();"></a>
+        </header>
+        <div class="search-container">
+            <div id="search">
+                <input class="inputText" type="text" placeholder="Search" onkeydown="search_onKeyDown();" oninput="search_onInput();"></input>
+                <a class="clearButton" onclick="clearSearch();">✕</a>
+            </div>
+        </div>
+        <article class="content"></article>
+    </section>
+
+    <div id="cart">
+        <header>
+            <div class="title"><b>The</b> Shopping Bag</div>
+            <a class="closeButton" onclick="cart.hide();">✕</a>
+        </header>
+        <article class="content"></article>
+    </div>
+
+    <script>
+        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
+
+        function init() {
+            fetchProducts();
+        }
+
+        function clearSearch() {
+            const search = document.getElementById("search");
+            const inputText = search.querySelector(".inputText");
+            inputText.value = null;
+            search_onInput();
+            fetchProducts();
+        }
+
+        function search_onKeyDown() {
+            if (event.key === "Enter") {
+                const search = document.getElementById('search');
+                const searchString = search.querySelector('.inputText').value;
+
+                fetchProducts(searchString);
+            } else if (event.key === "Escape") {
+                clearSearch()
+            }
+        }
+
+        function search_onInput() {
+            const search = document.getElementById("search");
+            const inputText = search.querySelector(".inputText");
+            const clearButton = search.querySelector(".clearButton");
+
+            if (inputText.value.length == 0) {
+                clearButton.style.display = "none";
+            } else {
+                clearButton.style.display = "block";
+            }
+        }
+
+        function fetchProducts(search) {
+            fetch(gatewayUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Request-Type': 'GraphQL'
+                },
+                body: JSON.stringify({
+                    query: `
+                        query products($search: String) {
+                            products(search: $search, offset:0, limit:20) {
+                                id,
+                                name,
+                                image,
+                                price
+                            }
+                        }
+                    `,
+                    variables: {
+                        search: search
+                    },
+                }),
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                const products = result.data.products || [];
+                catalog.setProducts(products, search);
+            });
+        }
+
+        const catalog = new class Catalog {
+            #products = [];
+            #filteredProducts = null;
+
+            get products() {
+                return this.#products;
+            }
+
+            setProducts(products, search) {
+                if (search && search.length > 0) {
+                    this.#filteredProducts = products;
+                } else {
+                    this.#products = products;
+                    this.#filteredProducts = null;
+                }
+
+                this.#paint();
+            }
+
+            product(id) {
+                return this.#products.find(product => product.id == id);
+            }
+
+            #paint() {
+                var html = '';
+                var products = this.#filteredProducts || this.products;
+                for (let i = 0; i < products.length; i++) {
+                    const product = products[i];
+                    html += `
+                        <div class="product">
+                            <p>${product.image}</p>
+                            <h2>${product.name}</h2>
+                            <h3>$${product.price}</h3>
+                            <button onclick="cart.add(catalog.product('${product.id}'))">Buy</button>
+                        </div>
+                    `
+                }
+
+                const main = document.getElementById("main");
+                const content = main.querySelector(".content")
+                content.innerHTML = html;
+           }
+        }
+
+        const cart = new class Cart {
+            static #LOCAL_STORAGE_KEY = 'Cart.items';
+
+            #items = {};
+
+            constructor() {
+                const shoppingCartItems = localStorage.getItem(Cart.#LOCAL_STORAGE_KEY);
+                if (shoppingCartItems) {
+                    this.#items = JSON.parse(shoppingCartItems);
+                    this.#paint();
+                }
+            }
+
+            add(product) {
+                const count = this.#items[product.id] > 0 ? this.#items[product.id] : 0;
+                this.#items[product.id] = count + 1;
+                this.#update();
+            }
+
+            remove(product) {
+                delete this.#items[product.id];
+                this.#update();
+            }
+
+            order() {
+                // TODO: Implement.
+                this.hide();
+                this.clear();
+            }
+
+            clear() {
+                this.#items = {};
+                this.#update();
+            }
+
+            show() {
+                this.#paint();
+                document.getElementById('cart').style.display = 'block';
+            }
+
+            hide() {
+                document.getElementById('cart').style.display = 'none';
+            }
+
+            #update() {
+                if (Object.keys(this.#items).length > 0) {
+                    localStorage.setItem(Cart.#LOCAL_STORAGE_KEY, JSON.stringify(this.#items))
+                } else {
+                    localStorage.removeItem(Cart.#LOCAL_STORAGE_KEY)
+                }
+                this.#paintButton();
+            }
+
+            #paintButton() {
+                const cartButton = document.getElementById('cartButton');
+                const count = Object.values(this.#items).reduce(
+                    (previous, current) => previous + current, 0
+                );
+                cartButton.innerText = count > 0 ? count : null;
+            }
+
+            #paint() {
+                this.#paintButton();
+
+                var html = '';
+                Object.keys(this.#items).forEach(key => {
+                    const product = catalog.products.find(product => product.id == key);
+                    if (product) {
+                        const count = this.#items[key];
+                        html += `
+                        <div class="item">
+                            <span>${product.image} <b>${product.name}</b>${count > 1 ? ' ✕ ' + count : ''}</span>
+                        </div>`
+                    }
+                });
+                if (html != '') {
+                    html += `
+                        <center>
+                            <button onclick="cart.order();">Order</button>
+                        </center>
+                    `
+                } else {
+                    html = `
+                        <center>
+                            <h1>Your bag is empty.</h1>
+                            <button onclick="cart.hide();">Continue Shopping</button>
+                        </center>
+                    `
+                }
+                
+                document.getElementById('cart').querySelector('.content').innerHTML = html;
+            }
+        }
+    </script>
+</body>
+
+</html>
