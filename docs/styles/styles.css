@@ -242,14 +242,16 @@ a.cart {
     margin-block-end: 1em;
 }
 
-/* Cart Content */
-
 .content.cart {
     margin: 5px 20px 0 20px;
 }
 
-.content.cart div {
-    font-size: 1.8em;
+.content.cart > * {
+    font-size: 1.7em;
+}
+
+.content.cart b {
+    font-weight: 500;
 }
 
 .content.cart a.button {
@@ -260,6 +262,7 @@ a.cart {
 
     font-size: inherit;
     font-weight: 400;
+    text-align: center;
     
     color: white;
     background-color: rgb(0, 113, 227);
