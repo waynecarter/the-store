@@ -1,7 +1,18 @@
 {
-    "host": "localhost",
-    "database": {
-        "name": "retail",
-        "bucket": "retail"
+    "gateway": {
+        "host": "localhost",
+        "database": {
+            "name": "retail",
+            "bucket": "retail"
+        }
+    },
+    "include": {
+        "database": true,
+        "users": true,
+        "roles": true,
+        "sync": true,
+        "resync": true,
+        "functions": true,
+        "graghql": true
     }
 }

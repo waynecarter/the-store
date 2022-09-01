@@ -2,16 +2,12 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 
-// What will be deployed.
-const include = {
-    database: true,
-    users: true,
-    roles: true,
-    sync: true,
-    resync: true,
-    functions: true,
-    graghql: true
-}
+// Read in the deployment config.
+const config = JSON.parse(fs.readFileSync(
+    new URL('deploy.json', import.meta.url)
+));
+const gateway = config.gateway;
+const include = config.include;
 
 async function get(path, silent) {
     return send('GET', path, null, null, silent || false);
@@ -159,11 +155,6 @@ async function send(method, path, body, contentType, silent) {
 
     return response;
 }
-
-// Read Gateway config.
-const gateway = JSON.parse(fs.readFileSync(
-    new URL('deploy.json', import.meta.url)
-));
 
 // Database
 if (include.database) { await deployDatabaseConfig(); }

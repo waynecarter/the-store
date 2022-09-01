@@ -5,9 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Deploy to Gateway",
+            "type": "node",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/deploy/deploy"
+        },
+        {
+            "name": "Launch App",
             "type": "chrome",
             "request": "launch",
-            "name": "Launch App",
             "file": "${workspaceFolder}/docs/index.html"
         }
     ]

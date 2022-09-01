@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Bag - The Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/cart.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <h1><a href="index.html"><b>The</b> Store</a></h1>
+        <a id="showCartButton" class="cart" href="cart.html"></a>
+    </div>
+    <div id="subheader" class="subheader">
+        <h2>Review your bag.</h2>
+    </div>
+    <div id="cartContent" class="content cart"></div>
+    <script>
+        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
+        const cart = new Cart(gatewayUrl);
+    </script>
+</body>
+
+</html>
