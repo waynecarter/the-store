@@ -27,31 +27,32 @@ class Cart {
                 'Authorization': 'Basic ' + btoa('admin:password')
             },
             body: JSON.stringify({
-                query: (function() {
-                    const cartContent = document.getElementById('cartContent');
-                    if  (cartContent) {
-                        return `{
-                            cart {
-                                items {
-                                    product {
-                                        id,
-                                        name,
-                                        image,
-                                        price
+                query: (
+                    function() {
+                        const cartContent = document.getElementById('cartContent');
+                        switch (cartContent) {
+                            case true: return `{
+                                cart {
+                                    items {
+                                        product {
+                                            id,
+                                            name,
+                                            image,
+                                            price
+                                        },
+                                        count
                                     },
                                     count
-                                },
-                                count
-                            }
-                        }`
-                    } else {
-                        return `{
-                            cart {
-                                count
-                            }
-                        }`
+                                }
+                            }`
+                            default: return `{
+                                cart {
+                                    count
+                                }
+                            }`
+                        }
                     }
-                })()
+                )()
             }),
         })
         .then(function(response) {
