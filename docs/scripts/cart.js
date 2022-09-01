@@ -30,7 +30,7 @@ class Cart {
                 query: (
                     function() {
                         const cartContent = document.getElementById('cartContent');
-                        switch (cartContent) {
+                        switch (cartContent != null) {
                             case true: return `{
                                 cart {
                                     items {
