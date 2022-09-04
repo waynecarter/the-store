@@ -12,7 +12,7 @@ function orderCart(context, args, parent, info) {
     }
 
     // HACK: Need a way to generate unique IDs. Use date for now.
-    var orderId = 'order:' + storeId + ':' + Date.now();
+    var orderId = 'order:' + Date.now();
     var order = {
         type: 'order',
         customerId: context.user.name,
