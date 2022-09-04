@@ -304,7 +304,7 @@ header > h1 {
 /* Checkout */
 
 .content.checkout div {
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 
 select {
@@ -322,7 +322,7 @@ select {
 /* Order */
 
 .content.order table {
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 
 .content.content.order td {
