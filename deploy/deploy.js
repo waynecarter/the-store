@@ -279,15 +279,10 @@ async function deploySyncConfig() {
     }
 }
 
-function bodyOfFunction(func) {
-    return func.match(/function[^{]+\{([\s\S]*)\}$/)[1];
-}
-
 // Functions
 if (include.functions) { await deployFunctionsConfig(); }
 async function deployFunctionsConfig() {
     var functions = {};
-    var queries = {};
 
     // Read config.
     const functionsDir = new URL('../gateway/functions/', import.meta.url);
@@ -325,32 +320,18 @@ async function deployFunctionsConfig() {
 
         // Include.
         if (config != null, code != null) {
-            switch (config.type) {
-                case 'javascript':
-                    functions[functionName] = {
-                        parameters: config.args,
-                        allow: config.allow
-                    };
-                    functions[functionName][config.type] = bodyOfFunction(code);
-                    break;
-                case 'query':
-                    queries[functionName] = {
-                        parameters: config.args,
-                        allow: config.allow
-                    };
-                    queries[functionName]['statement'] = code;
-                    break;
-            }
+            functions[functionName] = {
+                type: config.type,
+                parameters: config.args,
+                allow: config.allow,
+                code: code
+            };
         }
     }
 
     // Deploy
     if (Object.keys(functions).length > 0) {
         await put('/_config/functions', functions, ContentType.json);
-    }
-
-    if (Object.keys(queries).length > 0) {
-        await put('/_config/queries', queries, ContentType.json);
     }
 }
 
@@ -392,7 +373,7 @@ async function deployGraphQLConfig() {
 
                 const resolverName = path.parse(resolverFileName).name;
                 const code = String(fs.readFileSync(resolverFile));
-                graghql.resolvers[typeName][resolverName] = bodyOfFunction(code);
+                graghql.resolvers[typeName][resolverName] = code;
             }
         }
     }

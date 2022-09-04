@@ -1,6 +1,6 @@
-function products(parent, args, context, info) {
-    return context.app.query('getProducts', {
-        search: args.search != null ? args.search : "",
+function products(context, args, parent, info) {
+    return context.user.func('products', {
+        search: args.search || '',
         limit: args.limit,
         offset: args.offset
     });

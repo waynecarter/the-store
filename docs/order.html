@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Order - The Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+    <link rel="icon" href="images/the.svg">
+    <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/cart.js"></script>
+    <script src="scripts/orders.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1><a href="index.html"><b>The</b> Store</a></h1>
+        <a id="showCartButton" class="cart" href="cart.html"></a>
+    </header>
+    <div id="subheader" class="subheader">
+        <h2>View your order.</h2>
+    </div>
+    <div id="orderContent" class="content order"></div>
+
+    <script>
+        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
+        const cart = new Cart(gatewayUrl);
+        const orders = new Orders(gatewayUrl);
+
+        // Show order.
+        const orderId = (new URL(document.location)).searchParams.keys().next().value;
+        orders.get(orderId).then(order => showOrder(order));
+
+        function showOrder(order) {
+            if (!order) {
+                const subheaderLabel = document.querySelector('#subheader h2');
+                subheaderLabel.innerText = 'Order not found.'
+
+                const content = document.getElementById("orderContent");
+                content.innerHTML = `<a class="button" href="mailto:info@thestore.com?subject=Order ${orderId}">Contact Us</a>`;
+
+                return;
+            }
+
+            var html = `
+            <table>
+                <tr>
+                    <td><b>Status</b></td>
+                    <td>Ready for pickup</td>
+                </tr>
+                <tr>
+                    <td><b>Items</b></td>
+                    <td>${
+                        order.items.map(
+                            function(item) {
+                                return `<div>
+                                    <span>${item.product.image} ${item.product.name} ${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
+                                </div>`
+                            }
+                        ).join('')
+                    }
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Store</b></td>
+                    <td>${order.store.name}</td>
+                </tr>
+            </table>
+            <a class="button" href="mailto:${order.store.email}?subject=Order ${orderId}">Contact Us</a>
+            `;
+
+            const content = document.getElementById("orderContent");
+            content.innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>

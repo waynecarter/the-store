@@ -29,7 +29,7 @@ class Catalog {
             },
             body: JSON.stringify({
                 query: `
-                    query products($search: String) {
+                    query Products($search: String) {
                         products(search: $search, offset:0, limit:20) {
                             id,
                             name,
@@ -40,7 +40,7 @@ class Catalog {
                 `,
                 variables: {
                     search: this.#search.searchString
-                },
+                }
             }),
         })
         .then(function(response) {
@@ -63,7 +63,7 @@ class Catalog {
                     <p>${product.image}</p>
                     <h2>${product.name}</h2>
                     <h3>$${product.price}</h3>
-                    <button onclick="cart.add('${product.id}')">Add to Bag</button>
+                    <button class="compact" onclick="cart.add('${product.id}')">Add to Bag</button>
                 </div>
             `
         }
@@ -88,7 +88,7 @@ class Search {
         });
 
         this.#inputText.addEventListener('input', () => {
-            this.#paint();
+            // TODO: Fetch as the user types?
         });
 
         this.#clearButton.addEventListener('click', () => {
@@ -102,16 +102,7 @@ class Search {
 
     #clear() {
         this.#inputText.value = null;
-        this.#paint();
         this.#catalog.fetch();
-    }
-
-    #paint() {
-        if (this.#inputText.value.length == 0) {
-            this.#clearButton.style.display = 'none';
-        } else {
-            this.#clearButton.style.display = 'inline-block';
-        }
     }
 
     get #inputText() {

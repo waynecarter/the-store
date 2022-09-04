@@ -5,21 +5,35 @@ type Product {
     price: Float!
 }
 
-type Cart {
-    items: [CartItem!]
+type Store {
+    id: ID!
+    name: String!
+    email: String
+}
+
+type LineItem {
+    product: Product!,
     count: Int!
 }
 
-type CartItem {
-    product: Product!,
+type Cart {
+    items: [LineItem!]
     count: Int!
+}
+
+type Order {
+    id: ID!
+    store: Store!
+    items: [LineItem!]!
 }
 
 type Query {
     products(search: String, offset: Int, limit: Int): [Product]
     cart: Cart
+    order(id: ID!): Order
 }
 
 type Mutation {
     addToCart(productId: ID!): Boolean
+    orderCart(storeId: ID!): Order
 }

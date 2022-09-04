@@ -128,7 +128,7 @@ class Cart {
                 </div>`
             });
 
-            html += `<a class="button">Check Out</a>`
+            html += `<a class="button" href="checkout.html">Check Out</a>`
 
             content.innerHTML = html;
         } else {
@@ -136,7 +136,5 @@ class Cart {
             subheaderLabel.innerText = 'Your bag is empty.'
             content.innerHTML = '<a class="button" href="index.html">Continue Shopping</a>';
         }
-        
-        
     }
 }

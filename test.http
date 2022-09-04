@@ -5,6 +5,19 @@
 ### GraphQL ###
 ###############
 
+### Get Products
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+query {
+    products(offset: 0, limit: 5) {
+        id,
+        name,
+        image,
+        price
+    }
+}
+
 ### Get Cart
 POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
 X-Request-Type: GraphQL
@@ -24,23 +37,72 @@ query {
     }
 }
 
-# query {
-#     cart {
-#         items {
-#             id,
-#             name,
-#             image,
-#             price
-#         }
-#     }
-# }
-
 ### Add to Cart
 POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
 X-Request-Type: GraphQL
 
 mutation {
-    addToCart(productId: "product2")
+    addToCart(productId: "product1")
+}
+
+### Order Cart
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+mutation {
+    orderCart(storeId: "store1") {
+        id,
+        store {
+            id,
+            name,
+            email
+        },
+        items {
+            product {
+                id,
+                name,
+                image,
+                price
+            },
+            count
+        }
+    }
+}
+
+### Get Store
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+query {
+    store(id: "store1") {
+        id,
+        name,
+        email
+    }
+}
+
+### Get Order
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+query {
+    order(id: "order:store1:1662234668516") {
+        id,
+        store {
+            id,
+            name,
+            email
+        },
+        items {
+            product {
+                id,
+                name,
+                image,
+                price
+            },
+            count
+        }
+    }
 }
 
 ############
