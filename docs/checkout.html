@@ -10,11 +10,11 @@
     <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
 
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="scripts/cart.js"></script>
-    <script src="scripts/checkout.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/cart-button.js"></script>
 </head>
 
-<body>
+<body onload="load();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -34,20 +34,21 @@
         <button onclick="submitOrder();">Submit Order</button>
     </div>
     <script>
-        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
-        const cart = new Cart(gatewayUrl);
-        const checkout = new Checkout(gatewayUrl);
+        const app = new App('http://localhost:4984/retail');
 
-        function submitOrder() {
+        function load() {
+            new CartButton(app).refresh();
+        }
+
+        async function submitOrder() {
             const storeId = document.getElementById('store').value;
-
-            checkout.orderCart(storeId).then(function (order) {
-                if (!order) {
-                    alert("Unable to check out. Try again.");
-                    return;
-                }
+            const order = await app.checkout.orderCart(storeId);
+            
+            if (!order) {
+                alert("Unable to check out. Try again.");
+            } else {
                 window.location.replace(`order.html?${order.id}`);
-            })
+            }
         }
     </script>
 </body>

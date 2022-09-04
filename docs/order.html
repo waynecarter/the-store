@@ -10,11 +10,11 @@
     <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
 
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="scripts/cart.js"></script>
-    <script src="scripts/orders.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/cart-button.js"></script>
 </head>
 
-<body>
+<body onload="load();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -25,15 +25,17 @@
     <div id="orderContent" class="content order"></div>
 
     <script>
-        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
-        const cart = new Cart(gatewayUrl);
-        const orders = new Orders(gatewayUrl);
+        const app = new App('http://localhost:4984/retail');
 
-        // Show order.
-        const orderId = (new URL(document.location)).searchParams.keys().next().value;
-        orders.get(orderId).then(order => showOrder(order));
+        async function load() {
+            fetchOrder();
+            new CartButton(app).refresh();
+        }
 
-        function showOrder(order) {
+        async function fetchOrder() {
+            const orderId = (new URL(document.location)).searchParams.keys().next().value;
+            const order = await app.orders.get(orderId);
+
             if (!order) {
                 const subheaderLabel = document.querySelector('#subheader h2');
                 subheaderLabel.innerText = 'Order not found.'

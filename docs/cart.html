@@ -10,10 +10,10 @@
     <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
 
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="scripts/cart.js"></script>
+    <script src="scripts/app.js"></script>
 </head>
 
-<body>
+<body onload="load();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -23,8 +23,38 @@
     </div>
     <div id="cartContent" class="content cart"></div>
     <script>
-        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
-        const cart = new Cart(gatewayUrl);
+        const app = new App('http://localhost:4984/retail');
+
+        function load() {
+            fetchCart();
+        }
+
+        async function fetchCart() {
+            const cart = await app.cart.get();
+            
+            if (cart.items.length > 0) {
+                var html = cart.items.map(
+                    function(item) {
+                        return `<div>
+                            <span>${item.product.image} <b>${item.product.name}</b>${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
+                        </div>`
+                    }
+                ).join('')
+                html += `<a class="button" href="checkout.html">Check Out</a>`
+
+                const content = document.getElementById('cartContent');
+                content.innerHTML = html;
+
+                const showCartButton = document.getElementById('showCartButton');
+                showCartButton.innerText = cart.count;
+            } else {
+                const subheaderLabel = document.querySelector('#subheader h2');
+                subheaderLabel.innerText = 'Your bag is empty.'
+                
+                const content = document.getElementById('cartContent');
+                content.innerHTML = '<a class="button" href="index.html">Continue Shopping</a>';
+            }
+        }
     </script>
 </body>
 

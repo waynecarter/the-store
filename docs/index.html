@@ -10,27 +10,67 @@
     <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
 
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="scripts/catalog.js"></script>
-    <script src="scripts/cart.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/cart-button.js"></script>
 </head>
 
-<body>
+<body onload="load();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
     </header>
     <div class="search-bar">
         <div id="search" class="search">
-            <input class="inputText" type="text" placeholder="Search" onkeydown1="search.onKeyDown(event);" oninput1="search.onInput(event);" required="required"></input>
-            <button class="clearButton" href="javascript: search.clear();">✕</button>
+            <input class="inputText" type="text" placeholder="Search" onkeydown="search_onKeyDown(event);" required="required"></input>
+            <button class="clearButton" onclick="clearSearch();">✕</button>
         </div>
     </div>
     <div id="catalogContent" class="content catalog"></div>
 
     <script>
-        const gatewayUrl = 'http://localhost:4984/retail/_graphql';
-        const catalog = new Catalog(gatewayUrl);
-        const cart = new Cart(gatewayUrl);
+        const app = new App('http://localhost:4984/retail');
+
+        function load() {
+            fetchProducts();
+            new CartButton(app).refresh();
+        }
+
+        async function fetchProducts() {
+            const search = document.querySelector('#search > input').value;
+            const products = await app.products.find(search);
+            
+            const content = document.getElementById('catalogContent');
+            content.innerHTML = products.map(
+                function(product) {
+                    return `<div>
+                        <p>${product.image}</p>
+                        <h2>${product.name}</h2>
+                        <h3>$${product.price}</h3>
+                        <button class="compact" onclick="addProductToCart('${product.id}')">Add to Bag</button>
+                    </div>`
+                }
+            ).join('');
+        }
+
+        async function addProductToCart(productId) {
+            await app.cart.addProduct(productId);
+            new CartButton(app).refresh();
+        }
+
+        function clearSearch() {
+            const search = document.querySelector('#search > input');
+            search.value = null;
+            
+            fetchProducts();
+        }
+
+        function search_onKeyDown(event) {
+            if (event.key === 'Enter') {
+                fetchProducts();
+            } else if (event.key === 'Escape') {
+                clearSearch();
+            }
+        }
     </script>
 </body>
 
