@@ -11,7 +11,6 @@
 
     <link rel="stylesheet" href="styles/styles.css">
     <script src="scripts/app.js"></script>
-    <script src="scripts/cart-button.js"></script>
 </head>
 
 <body onload="load();">
@@ -32,7 +31,7 @@
 
         function load() {
             fetchProducts();
-            new CartButton(app).refresh();
+            app.cart.refreshButton();
         }
 
         async function fetchProducts() {
@@ -54,7 +53,6 @@
 
         async function addProductToCart(productId) {
             await app.cart.addProduct(productId);
-            new CartButton(app).refresh();
         }
 
         function clearSearch() {

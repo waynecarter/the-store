@@ -1,13 +1,10 @@
 class App {
-    #url = null;
-
     constructor(url) {
         if (!url.endsWith('/_graphql')) {
             if (!url.endsWith('/')) { url += '/'; }
             url += '_graphql';
         }
 
-        this.#url = url;
         this.products = new Products(url);
         this.cart = new Cart(url);
         this.checkout = new Checkout(url);
@@ -139,7 +136,19 @@ class Cart {
         const json = await response.json();
         const success = json.data ? json.data.addToCart == true : false;
         
+        if (success) {
+            this.refreshButton();
+        }
+
         return success;
+    }
+
+    async refreshButton() {
+        const showCartButton = document.getElementById('showCartButton');
+        if (!showCartButton) { return; }
+    
+        const count = await this.getCount();
+        showCartButton.innerText = count > 0 ? count : null;
     }
 }
 

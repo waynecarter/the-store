@@ -11,7 +11,6 @@
 
     <link rel="stylesheet" href="styles/styles.css">
     <script src="scripts/app.js"></script>
-    <script src="scripts/cart-button.js"></script>
 </head>
 
 <body onload="load();">
@@ -37,7 +36,7 @@
         const app = new App('http://localhost:4984/retail');
 
         function load() {
-            new CartButton(app).refresh();
+            app.cart.refreshButton();
         }
 
         async function submitOrder() {
