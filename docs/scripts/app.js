@@ -9,6 +9,12 @@ class App {
         this.cart = new Cart(url);
         this.checkout = new Checkout(url);
         this.orders = new Orders(url);
+
+        window.addEventListener('load', () => {
+            this.cart.refreshButton();
+        }, {
+            once : true
+        });
     }
 }
 

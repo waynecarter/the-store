@@ -13,7 +13,7 @@
     <script src="scripts/app.js"></script>
 </head>
 
-<body onload="load();">
+<body onload="fetchOrder();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -25,11 +25,6 @@
 
     <script>
         const app = new App('http://localhost:4984/retail');
-
-        async function load() {
-            fetchOrder();
-            app.cart.refreshButton();
-        }
 
         async function fetchOrder() {
             const orderId = (new URL(document.location)).searchParams.keys().next().value;

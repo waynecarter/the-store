@@ -13,7 +13,7 @@
     <script src="scripts/app.js"></script>
 </head>
 
-<body onload="load();">
+<body onload="fetchCart();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -24,10 +24,6 @@
     <div id="cartContent" class="content cart"></div>
     <script>
         const app = new App('http://localhost:4984/retail');
-
-        function load() {
-            fetchCart();
-        }
 
         async function fetchCart() {
             const cart = await app.cart.get();

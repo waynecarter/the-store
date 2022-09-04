@@ -13,7 +13,7 @@
     <script src="scripts/app.js"></script>
 </head>
 
-<body onload="load();">
+<body onload="fetchProducts();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a id="showCartButton" class="cart" href="cart.html"></a>
@@ -28,11 +28,6 @@
 
     <script>
         const app = new App('http://localhost:4984/retail');
-
-        function load() {
-            fetchProducts();
-            app.cart.refreshButton();
-        }
 
         async function fetchProducts() {
             const search = document.querySelector('#search > input').value;
