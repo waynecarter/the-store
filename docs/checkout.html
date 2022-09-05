@@ -16,9 +16,9 @@
 <body>
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
-        <a id="showCartButton" class="cart" href="cart.html"></a>
+        <a class="cart" href="cart.html"></a>
     </header>
-    <div id="subheader" class="subheader">
+    <div class="subheader">
         <h2>Choose your pickup location.</h2>
     </div>
     <div class="content checkout">
@@ -32,6 +32,7 @@
         </div>
         <button onclick="submitOrder();">Submit Order</button>
     </div>
+    
     <script>
         const app = new App('http://localhost:4984/retail');
 

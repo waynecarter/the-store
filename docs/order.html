@@ -16,60 +16,52 @@
 <body onload="fetchOrder();">
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
-        <a id="showCartButton" class="cart" href="cart.html"></a>
+        <a class="cart" href="cart.html"></a>
     </header>
-    <div id="subheader" class="subheader">
+    <div class="subheader">
         <h2>View your order.</h2>
     </div>
-    <div id="orderContent" class="content order"></div>
+    <div class="content order"></div>
 
     <script>
         const app = new App('http://localhost:4984/retail');
-
-        async function fetchOrder() {
-            const orderId = (new URL(document.location)).searchParams.keys().next().value;
-            const order = await app.query.order(orderId);
-
+        const orderId = (new URL(document.location)).searchParams.keys().next().value;
+        app.query.order(orderId).then(function (order) {
             if (!order) {
-                const subheaderLabel = document.querySelector('#subheader h2');
+                const subheaderLabel = document.querySelector('.subheader h2');
                 subheaderLabel.innerText = 'Order not found.'
 
-                const content = document.getElementById("orderContent");
+                const content = document.querySelector('.content');
                 content.innerHTML = `<a class="button" href="mailto:info@thestore.com?subject=Order ${orderId}">Contact Us</a>`;
 
                 return;
             }
 
-            var html = `
-            <table>
-                <tr>
-                    <td><b>Status</b></td>
-                    <td>Ready for pickup</td>
-                </tr>
-                <tr>
-                    <td><b>Items</b></td>
-                    <td>${
-                        order.items.map(
-                            function(item) {
-                                return `<div>
+            const content = document.querySelector('.content');
+            content.innerHTML = `
+                <table>
+                    <tr>
+                        <td><b>Status</b></td>
+                        <td>Ready for pickup</td>
+                    </tr>
+                    <tr>
+                        <td><b>Items</b></td>
+                        <td>` +
+                            order.items.map( item => `
+                                <div>
                                     <span>${item.product.image} ${item.product.name} ${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
                                 </div>`
-                            }
-                        ).join('')
-                    }
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>Store</b></td>
-                    <td>${order.store.name}</td>
-                </tr>
-            </table>
-            <a class="button" href="mailto:${order.store.email}?subject=Order ${orderId}">Contact Us</a>
+                            ).join('') + `
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Store</b></td>
+                        <td>${order.store.name}</td>
+                    </tr>
+                </table>
+                <a class="button" href="mailto:${order.store.email}?subject=Order ${orderId}">Contact Us</a>
             `;
-
-            const content = document.getElementById("orderContent");
-            content.innerHTML = html;
-        }
+        });
     </script>
 </body>
 

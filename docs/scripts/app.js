@@ -7,11 +7,11 @@ class App {
 
         const app = this;
         async function refreshCartButton() {
-            const showCartButton = document.getElementById('showCartButton');
-            if (!showCartButton) { return; }
+            const cartButton = document.querySelector('header > a.cart');
+            if (!cartButton) { return; }
         
             const count = await app.query.cartCount();
-            showCartButton.innerText = count > 0 ? count : null;
+            cartButton.innerText = count > 0 ? count : null;
         }
 
         this.query = new Query(url);
@@ -21,9 +21,7 @@ class App {
 
         window.addEventListener('load', () => {
             refreshCartButton();
-        }, {
-            once : true
-        });
+        }, { once : true });
     }
 }
 

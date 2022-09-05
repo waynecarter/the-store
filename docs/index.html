@@ -13,45 +13,45 @@
     <script src="scripts/app.js"></script>
 </head>
 
-<body onload="fetchProducts();">
+<body>
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
-        <a id="showCartButton" class="cart" href="cart.html"></a>
+        <a class="cart" href="cart.html"></a>
     </header>
     <div class="search-bar">
-        <div id="search" class="search">
-            <input class="inputText" type="text" onkeydown="search_onKeyDown(event);" required="required"></input>
-            <button class="clearButton" onclick="clearSearch();">✕</button>
+        <div class="search">
+            <input type="text" onkeydown="search_onKeyDown(event);" required="required"></input>
+            <button onclick="clearSearch();">✕</button>
         </div>
     </div>
-    <div id="catalogContent" class="content catalog"></div>
+    <div class="content products"></div>
 
     <script>
         const app = new App('http://localhost:4984/retail');
 
+        fetchProducts();
+
         async function fetchProducts() {
-            const search = document.querySelector('#search > input').value;
+            const search = document.querySelector('.search > input').value;
             const products = await app.query.products(search);
             
-            const content = document.getElementById('catalogContent');
-            content.innerHTML = products.map(
-                function(product) {
-                    return `<div>
-                        <p>${product.image}</p>
-                        <h2>${product.name}</h2>
-                        <h3>$${product.price}</h3>
-                        <button class="compact" onclick="addProductToCart('${product.id}')">Add to Bag</button>
-                    </div>`
-                }
+            const content = document.querySelector('.content');
+            content.innerHTML = products.map( product => `
+                <div>
+                    <p>${product.image}</p>
+                    <h2>${product.name}</h2>
+                    <h3>$${product.price}</h3>
+                    <button class="compact" onclick="addProductToCart('${product.id}');">Add to Bag</button>
+                </div>`
             ).join('');
         }
 
         async function addProductToCart(productId) {
-            await app.mutation.addToCart(productId);
+            app.mutation.addToCart(productId);
         }
 
         function clearSearch() {
-            const search = document.querySelector('#search > input');
+            const search = document.querySelector('.search > input');
             search.value = null;
             
             fetchProducts();

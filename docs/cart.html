@@ -13,44 +13,40 @@
     <script src="scripts/app.js"></script>
 </head>
 
-<body onload="fetchCart();">
+<body>
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
-        <a id="showCartButton" class="cart" href="cart.html"></a>
+        <a class="cart" href="cart.html"></a>
     </header>
-    <div id="subheader" class="subheader">
+    <div class="subheader">
         <h2>Review your bag.</h2>
     </div>
-    <div id="cartContent" class="content cart"></div>
+    <div class="content cart"></div>
+
     <script>
         const app = new App('http://localhost:4984/retail');
-
-        async function fetchCart() {
-            const cart = await app.query.cart();
-            
+        app.query.cart().then(function (cart) {
             if (cart.items.length > 0) {
-                var html = cart.items.map(
-                    function(item) {
-                        return `<div>
-                            <span>${item.product.image} <b>${item.product.name}</b>${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
-                        </div>`
-                    }
+                var html = cart.items.map( item => `
+                    <div>
+                        <span>${item.product.image} <b>${item.product.name}</b>${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
+                    </div>`
                 ).join('')
                 html += `<a class="button" href="checkout.html">Check Out</a>`
 
-                const content = document.getElementById('cartContent');
+                const content = document.querySelector('.content');
                 content.innerHTML = html;
 
-                const showCartButton = document.getElementById('showCartButton');
-                showCartButton.innerText = cart.count;
+                const cartButton = document.querySelector('header > a.cart');
+                cartButton.innerText = cart.count;
             } else {
-                const subheaderLabel = document.querySelector('#subheader h2');
+                const subheaderLabel = document.querySelector('.subheader h2');
                 subheaderLabel.innerText = 'Your bag is empty.'
                 
-                const content = document.getElementById('cartContent');
+                const content = document.querySelector('.content');
                 content.innerHTML = '<a class="button" href="index.html">Continue Shopping</a>';
             }
-        }
+        })
     </script>
 </body>
 

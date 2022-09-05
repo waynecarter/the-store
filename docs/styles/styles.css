@@ -237,9 +237,9 @@ header > h1 {
     margin-top: 20px;
 }
 
-/* Catalog */
+/* Products */
 
-.content.catalog {
+.content.products {
     display:flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -249,50 +249,52 @@ header > h1 {
     margin: 20px 0;
 }
 
-.content.catalog > * {
+.content.products > * {
     display: inline-block;
 }
 
 @media only screen and (min-width: 200px) {
-    .content.catalog > * { width: calc(100vw); }
+    .content.products > * { width: calc(100vw); }
 }
 
 @media only screen and (min-width: 400px) {
-    .content.catalog > * { width: calc(50vw); }
+    .content.products > * { width: calc(50vw); }
 }
 
 @media only screen and (min-width: 600px) {
-    .content.catalog > * { width: calc(33.333vw); }
+    .content.products > * { width: calc(33.333vw); }
 }
 
 @media only screen and (min-width: 800px) {
-    .content.catalog > * { width: calc(25vw); }
+    .content.products > * { width: calc(25vw); }
 }
 
 @media only screen and (min-width: 1000px) {
-    .content.catalog > * { width: calc(20vw); }
+    .content.products > * { width: calc(20vw); }
 }
 
 @media only screen and (min-width: 1200px) {
-    .content.catalog > * { width: calc(16vw); }
+    .content.products > * { width: calc(16vw); }
 }
 
 /* Horizontally center item content */
-.content.catalog > * > * {
+.content.products > * > * {
     display: block;
     margin: 0 auto;
     text-align: center;
 }
 
-.content.catalog p {
+.content.products p {
     font-size: max(14vw, 140px);
 }
 
-.content.catalog h2 {
+.content.products h2 {
+    font-size: 1.5em;
     font-weight: 400;
 }
 
-.content.catalog h3 {
+.content.products h3 {
+    font-size: 1.17em;
     font-weight: 300;
     margin-block-end: 1em;
 }
