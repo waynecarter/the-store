@@ -5,27 +5,36 @@ class App {
             url += '_graphql';
         }
 
-        this.products = new Products(url);
-        this.cart = new Cart(url);
-        this.checkout = new Checkout(url);
-        this.orders = new Orders(url);
+        const app = this;
+        async function refreshCartButton() {
+            const showCartButton = document.getElementById('showCartButton');
+            if (!showCartButton) { return; }
+        
+            const count = await app.query.cartCount();
+            showCartButton.innerText = count > 0 ? count : null;
+        }
+
+        this.query = new Query(url);
+        this.mutation = new Mutation(url, function() {
+            refreshCartButton();
+        });
 
         window.addEventListener('load', () => {
-            this.cart.refreshButton();
+            refreshCartButton();
         }, {
             once : true
         });
     }
 }
 
-class Products {
+class GraphQL {
     #url = null;
 
     constructor(url) {
         this.#url = url;
     }
 
-    async find(search) {
+    async query(gql) {
         const response = await fetch(this.#url, {
             method: 'POST',
             mode: 'cors',
@@ -34,48 +43,82 @@ class Products {
                 'X-Request-Type': 'GraphQL',
                 'Authorization': 'Basic ' + btoa('admin:password')
             },
-            body: JSON.stringify({
-                query: `
-                    query Products($search: String) {
-                        products(search: $search, offset:0, limit:20) {
+            body: JSON.stringify(gql),
+        })
+        const json = await response.json();
+        return json ? json.data : null;
+    }
+}
+
+class Query extends GraphQL {
+    async products(search, offset, limit) {
+        const data = await super.query({
+            query: `
+                query Products($search: String, $offset: Int, $limit: Int) {
+                    products(search: $search, offset: $offset, limit: $limit) {
+                        id,
+                        name,
+                        image,
+                        price
+                    }
+                }
+            `,
+            variables: {
+                search: search,
+                offset: `${offset || 0}`,
+                limit: `${limit || 20}`
+            }
+        }) || {};
+        
+        return data.products || [];
+    }
+
+    async cart() {
+        const data = await super.query({
+            query: `{
+                cart {
+                    items {
+                        product {
                             id,
                             name,
                             image,
                             price
-                        }
-                    }
-                `,
-                variables: {
-                    search: search
+                        },
+                        count
+                    },
+                    count
                 }
-            }),
-        })
-        const json = await response.json();
-        const products = json.data ? json.data.products || [] : [];
+            }`
+        }) || {};
         
-        return products;
-    }
-}
-
-class Cart {
-    #url = null;
-
-    constructor(url) {
-        this.#url = url;
+        return data.cart || {};
     }
 
-    async get() {
-        const response = await fetch(this.#url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
-            },
-            body: JSON.stringify({
-                query: `{
-                    cart {
+    async cartCount() {
+        const data = await super.query({
+            query: `{
+                cart {
+                    count
+                }
+            }`
+        }) || {};
+        const cart = data.cart || {};
+        const count = cart.count || 0;
+        
+        return count;
+    }
+
+    async order(id) {
+        const data = await super.query({
+            query: `
+                query Order($id: ID!) {
+                    order(id: $id) {
+                        id,
+                        store {
+                            id,
+                            name,
+                            email
+                        },
                         items {
                             product {
                                 id,
@@ -84,176 +127,80 @@ class Cart {
                                 price
                             },
                             count
-                        },
-                        count
+                        }
                     }
-                }`
-            }),
-        });
-        const json = await response.json();
-        const cart = json.data ? json.data.cart || {} : {};
+                }
+            `,
+            variables: {
+                id: id
+            }
+        }) || {};
         
-        return cart;
+        return data.order;
+    }
+}
+
+class Mutation extends GraphQL {
+    #onCartChange = null;
+
+    constructor(url, onCartChange) {
+        super(url);
+        this.#onCartChange = onCartChange;
     }
 
-    async getCount() {
-        const response = await fetch(this.#url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
+    async addToCart(productId) {
+        const data = await super.query({
+            query: `
+                mutation AddToCart($productId: ID!) {
+                    addToCart(productId: $productId)
+                }
+            `,
+            variables: {
+                productId: productId
             },
-            body: JSON.stringify({
-                query: `{
-                    cart {
-                        count
-                    }
-                }`
-            }),
-        });
-        const json = await response.json();
-        const cart = json.data ? json.data.cart || {} : {};
-        
-        return cart.count || 0;
-    }
-    
-    async addProduct(productId) {
-        const response = await fetch(this.#url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
-            },
-            body: JSON.stringify({
-                query: `
-                    mutation AddToCart($productId: ID!) {
-                        addToCart(productId: $productId)
-                    }
-                `,
-                variables: {
-                    productId: productId
-                },
-            }),
-        });
-        const json = await response.json();
-        const success = json.data ? json.data.addToCart == true : false;
+        }) || {};
+        const success = data.addToCart == true;
         
         if (success) {
-            this.refreshButton();
+            this.#onCartChange();
         }
 
         return success;
     }
 
-    async refreshButton() {
-        const showCartButton = document.getElementById('showCartButton');
-        if (!showCartButton) { return; }
-    
-        const count = await this.getCount();
-        showCartButton.innerText = count > 0 ? count : null;
-    }
-}
-
-class Checkout {
-    #url = null;
-
-    constructor(url) {
-        this.#url = url;
-    }
-    
     async orderCart(storeId) {
-        const response = await fetch(this.#url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
-            },
-            body: JSON.stringify({
-                query: `
-                    mutation OrderCart($storeId: ID!) {
-                        orderCart(storeId: $storeId) {
+        const data = await super.query({
+            query: `
+                mutation OrderCart($storeId: ID!) {
+                    orderCart(storeId: $storeId) {
+                        id,
+                        store {
                             id,
-                            store {
+                            name,
+                            email
+                        },
+                        items {
+                            product {
                                 id,
                                 name,
-                                email
+                                image,
+                                price
                             },
-                            items {
-                                product {
-                                    id,
-                                    name,
-                                    image,
-                                    price
-                                },
-                                count
-                            }
+                            count
                         }
                     }
-                `,
-                variables: {
-                    storeId: storeId
                 }
-            }),
-        })
-        const result = await response.json();
-        const order = result.data ? result.data.orderCart : null;
+            `,
+            variables: {
+                storeId: storeId
+            }
+        }) || {};
+        const order = data.orderCart;
 
-        return order;
-    }
-}
-
-class Orders {
-    #url = null;
-
-    constructor(url) {
-        this.#url = url;
-    }
-
-    async get(id) {
-        const response = await fetch(this.#url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
-            },
-            body: JSON.stringify({
-                query: `
-                    query Order($id: ID!) {
-                        order(id: $id) {
-                            id,
-                            store {
-                                id,
-                                name,
-                                email
-                            },
-                            items {
-                                product {
-                                    id,
-                                    name,
-                                    image,
-                                    price
-                                },
-                                count
-                            }
-                        }
-                    }
-                `,
-                variables: {
-                    id: id
-                }
-            }),
-        });
-        const json = await response.json();
-        const order = json.data ? json.data.order : null;
-
-        return order;
+        if (order) {
+            this.#onCartChange();
+        }
+        
+        return data.orderCart;
     }
 }

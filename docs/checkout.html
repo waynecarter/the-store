@@ -37,7 +37,7 @@
 
         async function submitOrder() {
             const storeId = document.getElementById('store').value;
-            const order = await app.checkout.orderCart(storeId);
+            const order = await app.mutation.orderCart(storeId);
             
             if (!order) {
                 alert("Unable to check out. Try again.");

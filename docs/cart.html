@@ -26,7 +26,7 @@
         const app = new App('http://localhost:4984/retail');
 
         async function fetchCart() {
-            const cart = await app.cart.get();
+            const cart = await app.query.cart();
             
             if (cart.items.length > 0) {
                 var html = cart.items.map(

@@ -31,7 +31,7 @@
 
         async function fetchProducts() {
             const search = document.querySelector('#search > input').value;
-            const products = await app.products.find(search);
+            const products = await app.query.products(search);
             
             const content = document.getElementById('catalogContent');
             content.innerHTML = products.map(
@@ -47,7 +47,7 @@
         }
 
         async function addProductToCart(productId) {
-            await app.cart.addProduct(productId);
+            await app.mutation.addToCart(productId);
         }
 
         function clearSearch() {

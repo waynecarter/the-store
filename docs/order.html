@@ -28,7 +28,7 @@
 
         async function fetchOrder() {
             const orderId = (new URL(document.location)).searchParams.keys().next().value;
-            const order = await app.orders.get(orderId);
+            const order = await app.query.order(orderId);
 
             if (!order) {
                 const subheaderLabel = document.querySelector('#subheader h2');
