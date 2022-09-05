@@ -1,10 +1,7 @@
 class App {
-    constructor(url) {
-        if (!url.endsWith('/_graphql')) {
-            if (!url.endsWith('/')) { url += '/'; }
-            url += '_graphql';
-        }
+    #url = new URL('http://localhost:4984/retail/_graphql');
 
+    constructor() {
         const app = this;
         async function refreshCartButton() {
             const cartButton = document.querySelector('header > a.cart');
@@ -14,8 +11,8 @@ class App {
             cartButton.innerText = count > 0 ? count : null;
         }
 
-        this.query = new Query(url);
-        this.mutation = new Mutation(url, function() {
+        this.query = new Query(this.#url);
+        this.mutation = new Mutation(this.#url, function() {
             refreshCartButton();
         });
 

@@ -34,8 +34,8 @@
     </div>
     
     <script>
-        const app = new App('http://localhost:4984/retail');
-
+        const app = new App();
+        
         async function submitOrder() {
             const storeId = document.getElementById('store').value;
             const order = await app.mutation.orderCart(storeId);

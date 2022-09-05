@@ -24,7 +24,8 @@
     <div class="content order"></div>
 
     <script>
-        const app = new App('http://localhost:4984/retail');
+        const app = new App();
+        
         const orderId = (new URL(document.location)).searchParams.keys().next().value;
         app.query.order(orderId).then(function (order) {
             if (!order) {

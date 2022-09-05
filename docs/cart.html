@@ -24,7 +24,7 @@
     <div class="content cart"></div>
 
     <script>
-        const app = new App('http://localhost:4984/retail');
+        const app = new App();
         app.query.cart().then(function (cart) {
             if (cart.items.length > 0) {
                 var html = cart.items.map( item => `
