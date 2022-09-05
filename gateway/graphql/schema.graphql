@@ -25,6 +25,13 @@ type Order {
     id: ID!
     store: Store!
     items: [LineItem!]!
+    status: OrderStatus!
+}
+
+enum OrderStatus {
+    AWAITING_FULLFILLMENT
+    AWAITING_PICKUP
+    COMPLETED
 }
 
 type Query {

@@ -17,7 +17,8 @@ function orderCart(context, args, parent, info) {
         type: 'order',
         customerId: context.user.name,
         storeId: storeId,
-        items: cart.items
+        items: cart.items,
+        status: 'AWAITING_FULLFILLMENT'
     };
     context.user.defaultCollection.save(orderId, order);
 

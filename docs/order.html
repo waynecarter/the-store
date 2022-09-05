@@ -43,7 +43,14 @@
                 <table>
                     <tr>
                         <td><b>Status</b></td>
-                        <td>Ready for pickup</td>
+                        <td>${ ( function() {
+                            switch (order.status) {
+                                case 'AWAITING_FULLFILLMENT': return 'Awaiting Fullfillment';
+                                case 'AWAITING_PICKUP': return 'Ready for Pickup';
+                                case 'COMPLETED': return 'Complete';
+                                default: return 'Unknown';
+                            }
+                        })()}</td>
                     </tr>
                     <tr>
                         <td><b>Items</b></td>

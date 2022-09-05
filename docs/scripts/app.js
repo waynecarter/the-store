@@ -109,6 +109,7 @@ class Query extends GraphQL {
                 query Order($id: ID!) {
                     order(id: $id) {
                         id,
+                        status,
                         store {
                             id,
                             name,
