@@ -25,6 +25,29 @@ h3 {
     font-weight: 300;
 }
 
+select {
+    font: inherit;
+    border: 0;
+    margin: 0;
+    padding: 0.1em 1em 0.1em 0.3em;
+    border-radius: 0.25em;
+
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+
+    background-color: #e8e8e8;
+
+    background-image: url(../images/down-arrow.svg);
+    background-size: 0.3em;
+    background-repeat: no-repeat;
+    background-position: right 0.4em center;
+}
+
+select::after { 
+    content: "▾";
+}
+
 /* Actions */
 
 a {
@@ -309,18 +332,6 @@ header > h1 {
 
 .content.checkout div {
     font-size: 1.5em;
-}
-
-select {
-    font: inherit;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    border-radius: 4px;
-
-    outline: none;
-
-    background-color: rgba(0, 0, 0, 0.07);
 }
 
 /* Order */
