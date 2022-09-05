@@ -28,10 +28,8 @@
         app.query.cart().then(function (cart) {
             if (cart.items.length > 0) {
                 var html = cart.items.map( item => `
-                    <div>
-                        <span>${item.product.image} <b>${item.product.name}</b>${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
-                    </div>`
-                ).join('')
+                    <div>${item.product.image} <b>${item.product.name}</b>${item.count > 1 ? ' ✕ ' + item.count : ''}</div>
+                `).join('')
                 html += `<a class="button" href="checkout.html">Check Out</a>`
 
                 const content = document.querySelector('.content');
