@@ -44,10 +44,6 @@ select {
     background-position: right 0.4em center;
 }
 
-select::after { 
-    content: "▾";
-}
-
 /* Actions */
 
 a {
