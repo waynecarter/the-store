@@ -153,7 +153,7 @@ header > h1 {
     margin: 0 auto;
 
     border-radius: 10px;
-    border-color: rgb(0, 0, 0, 0.22);
+    border-color: #c0c0c0;
     border-style: solid;
     border-width: 1px;
 }
@@ -175,6 +175,11 @@ header > h1 {
     -moz-appearance: none;
     -webkit-appearance: none;
     outline: none;
+
+    background-image: url(../images/search.svg);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .search > a {
@@ -206,6 +211,7 @@ header > h1 {
 }
 
 .search > input:valid {
+    background-image: none;
     padding-right: 40px;
 }
 
