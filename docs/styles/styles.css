@@ -163,7 +163,7 @@ header > h1 {
     height: 40px;
 
     font: inherit;
-    text-align: center;
+    /* text-align: center; */
 
     box-sizing: border-box;
     border: 0;
@@ -180,6 +180,17 @@ header > h1 {
     background-size: 20px;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.search > input:focus,
+.search > input:valid {
+    background-position-x: 10px;
+    padding-left: 38px;
+    padding-right: 38px;
+}
+
+.search > input:valid + button {
+    display: inline-block;
 }
 
 .search > a {
@@ -208,15 +219,6 @@ header > h1 {
     background-color: inherit;
     color: inherit;
     text-align: center;
-}
-
-.search > input:valid {
-    background-image: none;
-    padding-right: 40px;
-}
-
-.search > input:valid + button {
-    display: inline-block;
 }
 
 .search > button:hover {
