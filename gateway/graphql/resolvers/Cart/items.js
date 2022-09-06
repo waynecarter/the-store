@@ -3,7 +3,7 @@ function items(context, args, cart, info) {
     for (var productId in cart.items) {
         items.push({
             productId: productId,
-            count: Number(cart.items[productId]) || 0
+            count: cart.items[productId] || 0
         });
     }
 

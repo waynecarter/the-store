@@ -3,7 +3,7 @@ function items(context, args, order, info) {
     for (var productId in order.items) {
         items.push({
             productId: productId,
-            count: Number(order.items[productId]) || 0
+            count: order.items[productId] || 0
         });
     }
 

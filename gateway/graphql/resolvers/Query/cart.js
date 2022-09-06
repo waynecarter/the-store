@@ -5,7 +5,7 @@ function cart(context, args, parent, info) {
     
     cart.count = 0;
     for (var productId in cart.items) {
-        var itemCount = Number(cart.items[productId]) || 0;
+        var itemCount = cart.items[productId] || 0;
         cart.count += itemCount;
     }
 
