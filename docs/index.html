@@ -41,13 +41,15 @@
                     <p>${product.image}</p>
                     <h2>${product.name}</h2>
                     <h3>$${product.price}</h3>
-                    <button class="compact" onclick="addProductToCart('${product.id}');">Add to Bag</button>
+                    <button class="compact" onclick="addProductToCart(this, '${product.id}');">Add to Bag</button>
                 </div>`
             ).join('');
         }
 
-        async function addProductToCart(productId) {
-            app.mutation.addToCart(productId);
+        async function addProductToCart(button, productId) {
+            app.ui.showLoadingForCall(button, async function () {
+                await app.mutation.addToCart(productId);
+            });
         }
 
         function clearSearch() {

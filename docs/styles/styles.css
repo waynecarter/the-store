@@ -38,7 +38,7 @@ select {
 
     background-color: #e8e8e8;
 
-    background-image: url(../images/down-arrow.svg);
+    background-image: url(../images/select.svg);
     background-size: 0.3em;
     background-repeat: no-repeat;
     background-position: right 0.4em center;
@@ -87,7 +87,7 @@ a.button:hover {
 }
 
 button {
-    display: inline-block;
+    display: block;
     box-sizing: border-box;
     padding: 18px 100px;
 
@@ -114,6 +114,34 @@ button.compact {
 
 button:hover {
     opacity: 0.9;
+}
+
+button.loading {
+    cursor: unset;
+}
+
+button.loading:hover {
+    opacity: unset;
+}
+
+button.loading > * {
+    display: inline-block;
+
+    color: transparent;
+    background-image: url(../images/loading.svg);
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    animation-name: loading;
+    animation-duration: 1.5s;
+    animation-timing-function: steps(12, jump-start);
+    animation-iteration-count: infinite;
+}
+
+@keyframes loading {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Header */

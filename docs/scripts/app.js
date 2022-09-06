@@ -15,7 +15,8 @@ class App {
         this.mutation = new Mutation(this.#url, function() {
             refreshCartButton();
         });
-
+        this.ui = new UI();
+        
         window.addEventListener('load', () => {
             refreshCartButton();
         }, { once : true });
@@ -198,5 +199,21 @@ class Mutation extends GraphQL {
         }
         
         return data.orderCart;
+    }
+}
+
+class UI {
+    async showLoadingForCall(button, func) {
+        button.disabled = true;
+        const timeout = window.setTimeout(function () {
+            button.classList.add('loading');
+        }, 200);
+        button.innerHTML = `<span>${button.innerText}</span>`;
+        
+        await func();
+
+        window.clearTimeout(timeout);
+        button.classList.remove('loading');
+        button.disabled = false;
     }
 }
