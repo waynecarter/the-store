@@ -12,17 +12,17 @@ body {
 
 h1 {
     font-size: 1.5em;
-    font-weight: 400;
+    font-weight: normal;
 }
 
 h2 {
-    font-size: 1.5em;
-    font-weight: 400;
+    font-size: 1.4em;
+    font-weight: normal;
 }
 
 h3 {
     font-size: 1.2em;
-    font-weight: 300;
+    font-weight: normal;
 }
 
 select {
@@ -339,6 +339,7 @@ header > h1 {
 }
 
 .content.products h3 {
+    font-weight: 300;
     margin-block-end: 1em;
 }
 
@@ -361,13 +362,18 @@ header > h1 {
 /* Order */
 
 .content.order table {
-    font-size: 1.3em;
+    font: inherit;
 }
 
-.content.content.order td {
+.content.order td:first-child {
     vertical-align: top;
 }
 
-.content.content.order td:not(:first-child) {
+.content.order td:not(:first-child) {
     padding-left: 5px;
+}
+
+.content.order h3 {
+    font-weight: bold;
+    margin: 0;
 }

@@ -42,7 +42,7 @@
             content.innerHTML = `
                 <table>
                     <tr>
-                        <td><b>Status</b></td>
+                        <td><h3>Status</h3></td>
                         <td>${ ( function() {
                             switch (order.status) {
                                 case 'AWAITING_FULLFILLMENT': return 'Awaiting Fullfillment';
@@ -53,7 +53,7 @@
                         })()}</td>
                     </tr>
                     <tr>
-                        <td><b>Items</b></td>
+                        <td><h3>Items</h3></td>
                         <td>` +
                             order.items.map( item => `
                                 <div>
@@ -63,7 +63,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><b>Store</b></td>
+                        <td><h3>Store</h3></td>
                         <td>${order.store.name}</td>
                     </tr>
                 </table>
