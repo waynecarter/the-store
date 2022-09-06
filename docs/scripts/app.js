@@ -11,8 +11,8 @@ class App {
             cartButton.innerText = count > 0 ? count : null;
         }
 
-        this.query = new Query(this.#url);
-        this.mutation = new Mutation(this.#url, function() {
+        this.query = new Query(this);
+        this.mutation = new Mutation(this, function() {
             refreshCartButton();
         });
         this.ui = new UI();
@@ -21,16 +21,8 @@ class App {
             refreshCartButton();
         }, { once : true });
     }
-}
 
-class GraphQL {
-    #url = null;
-
-    constructor(url) {
-        this.#url = url;
-    }
-
-    async query(gql) {
+    async graphql(gql) {
         const response = await fetch(this.#url, {
             method: 'POST',
             mode: 'cors',
@@ -46,9 +38,15 @@ class GraphQL {
     }
 }
 
-class Query extends GraphQL {
+class Query {
+    #app = null;
+
+    constructor(app) {
+        this.#app = app;
+    }
+
     async products(search, offset, limit) {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `
                 query Products($search: String, $offset: Int, $limit: Int) {
                     products(search: $search, offset: $offset, limit: $limit) {
@@ -70,7 +68,7 @@ class Query extends GraphQL {
     }
 
     async cart() {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `{
                 cart {
                     items {
@@ -91,7 +89,7 @@ class Query extends GraphQL {
     }
 
     async cartCount() {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `{
                 cart {
                     count
@@ -105,7 +103,7 @@ class Query extends GraphQL {
     }
 
     async order(id) {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `
                 query Order($id: ID!) {
                     order(id: $id) {
@@ -137,16 +135,17 @@ class Query extends GraphQL {
     }
 }
 
-class Mutation extends GraphQL {
+class Mutation {
+    #app = null;
     #onCartChange = null;
-
-    constructor(url, onCartChange) {
-        super(url);
+    
+    constructor(app, onCartChange) {
+        this.#app = app;
         this.#onCartChange = onCartChange;
     }
 
     async addToCart(productId) {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `
                 mutation AddToCart($productId: ID!) {
                     addToCart(productId: $productId)
@@ -166,7 +165,7 @@ class Mutation extends GraphQL {
     }
 
     async orderCart(storeId) {
-        const data = await super.query({
+        const data = await this.#app.graphql({
             query: `
                 mutation OrderCart($storeId: ID!) {
                     orderCart(storeId: $storeId) {
