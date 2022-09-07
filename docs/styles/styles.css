@@ -263,28 +263,16 @@ header > h1 {
     display: inline-block;
 }
 
-.search > a {
-    display: none;
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    right: 0;
-    
-    box-sizing: border-box;
-    padding-top: 10px;
-
-    text-align: center;
-}
-
 .search > button {
     display: none;
     position: absolute;
     width: 40px;
     height: 40px;
+    top: 0;
     right: 0;
     
     box-sizing: border-box;
-    padding: 2px 0 0 0;
+    padding: 0;
 
     background-color: inherit;
     color: inherit;
