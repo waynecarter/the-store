@@ -25,6 +25,27 @@ h3 {
     font-weight: normal;
 }
 
+input[type=text], input[type=password]  {
+    display: block;
+    padding: 10px 15px;
+    box-sizing: border-box;
+
+    margin-block-start: 0.7em;
+
+    border-radius: 10px;
+    border-color: #c0c0c0;
+    border-style: solid;
+    border-width: 1px;
+
+    font: inherit;
+
+    appearance: none;
+    background-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
 select {
     font: inherit;
     border: 0;
@@ -376,4 +397,21 @@ header > h1 {
 .content.order h3 {
     font-weight: bold;
     margin: 0;
+}
+
+/* Login */
+
+.content.login {
+    width: 300px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.content.login > * {
+    width: 100%;
+}
+
+.content.login > h2 {
+    margin-bottom: 2em;
+    text-align: center;
 }

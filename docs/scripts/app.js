@@ -1,5 +1,5 @@
 class App {
-    #url = new URL('http://localhost:4984/retail/_graphql');
+    #url = new URL('http://localhost:4984/retail/');
 
     constructor() {
         const app = this;
@@ -22,14 +22,28 @@ class App {
         }, { once : true });
     }
 
-    async graphql(gql) {
-        const response = await fetch(this.#url, {
+    async login(user, password) {
+        const response = await fetch(new URL('_session', this.#url), {
             method: 'POST',
             mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Basic ${btoa(`${user}:${password}`)}`
+            }
+        })
+        
+        return response.ok;
+    }
+
+    async graphql(gql) {
+        const response = await fetch(new URL('_graphql', this.#url), {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Request-Type': 'GraphQL',
-                'Authorization': 'Basic ' + btoa('admin:password')
+                // 'Authorization': 'Basic ' + btoa('admin:password')
             },
             body: JSON.stringify(gql),
         })

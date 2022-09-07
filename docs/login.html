@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Login - The Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+    <link rel="icon" href="images/the.svg">
+    <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/app.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1><a href="index.html"><b>The</b> Store</a></h1>
+        <a class="cart" href="cart.html"></a>
+    </header>
+    <div class="content login">
+        <h2>Log in to <b>The</b> Store.</h2>
+        <input id="user" type="text" placeholder="User"/>
+        <input id="password" type="password" placeholder="Password"/>
+        <button onclick="login();">Log In</button>
+    </div>
+
+    <script>
+        const app = new App();
+
+        async function login() {
+            const user = document.getElementById('user').value;
+            const password = document.getElementById('password').value;
+            const loggedIn = await app.login(user, password);
+        }
+    </script>
+</body>
+
+</html>
