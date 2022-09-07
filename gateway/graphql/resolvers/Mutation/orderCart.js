@@ -20,10 +20,10 @@ function orderCart(context, args, parent, info) {
         items: cart.items,
         status: 'AWAITING_FULLFILLMENT'
     };
-    context.user.defaultCollection.save(orderId, order);
+    context.admin.defaultCollection.save(orderId, order);
 
     delete cart.items;
-    context.user.defaultCollection.save(cartId, cart);
+    context.admin.defaultCollection.save(cartId, cart);
 
     order.id = orderId;
     return order;

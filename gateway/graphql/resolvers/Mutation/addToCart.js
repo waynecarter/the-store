@@ -4,13 +4,17 @@ function addToCart(context, args, parent, info) {
     if (!product) { return false; }
 
     var cartId = 'cart:' + context.user.name;
-    var cart = context.user.defaultCollection.get(cartId) || { items: {} };
+    var cart = context.user.defaultCollection.get(cartId) || {
+        type: 'cart',
+        items: {},
+        customerId: context.user.name
+    };
     if (!cart.items) { cart.items = {} };
 
     var count = cart.items[productId] || 0;
     cart.items[productId] = count + 1;
     
-    context.user.defaultCollection.save(cartId, cart);
+    context.admin.defaultCollection.save(cartId, cart);
 
     return true;
 }

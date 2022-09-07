@@ -1,13 +1,11 @@
 function sync(doc, oldDoc, meta) {
+    requireAdmin();
     if (doc.type == 'product') {
-        requireRole('admin');
         channel('products');
     } else if (doc.type == 'cart') {
-        // TODO: Add security.
-        var userChannel = 'user:admin';
-        channel(userChannel);
+        channel('user:' + doc.customerId);
     } else if (doc.type == 'order') {
-        channel('orders');
+        // Channel orders to the customer and store.
         channel('user:' + doc.customerId);
         channel('store:' + doc.storeId);
     } else if (doc.type == 'store') {
