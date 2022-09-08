@@ -1,6 +1,3 @@
 {
-    "type": "javascript",
-    "allow": {
-        "roles": ["customer", "admin"]
-    }
+    "type": "javascript"
 }

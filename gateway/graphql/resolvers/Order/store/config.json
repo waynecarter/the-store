@@ -1,6 +1,3 @@
 {
-    "type": "javascript",
-    "allow": {
-        "channels": ["stores"]
-    }
+    "type": "javascript"
 }
