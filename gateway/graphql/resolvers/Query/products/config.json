@@ -1,0 +1,6 @@
+{
+    "type": "query",
+    "allow": {
+        "channels": ["products"]
+    }
+}

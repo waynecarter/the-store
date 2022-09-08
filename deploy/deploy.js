@@ -282,12 +282,59 @@ async function deploySyncConfig() {
 }
 
 // Functions
+
 if (include.functions) { await deployFunctionsConfig(); }
 async function deployFunctionsConfig() {
+    var functionsDir = new URL('../gateway/functions/', import.meta.url);
+    var functions = functionsConfigFrom(functionsDir);
+
+    // Deploy
+    if (Object.keys(functions).length > 0) {
+        await put('/_config/functions', functions, ContentType.json);
+    }
+}
+
+// GraphQL
+if (include.graghql) { await deployGraphQLConfig(); }
+async function deployGraphQLConfig() {
+    var graghql = {}
+    
+    // Read schema.
+    const graphqlDir = new URL('../gateway/graphql/', import.meta.url);
+    const schemaFile = new URL('schema.graphql', graphqlDir);
+    if (fs.existsSync(schemaFile)) {
+        graghql.schema = String(fs.readFileSync(schemaFile));
+    }
+
+    // Read resolvers.
+    const resolversDir = new URL(`resolvers/`, graphqlDir);
+    const typeNames = fs.readdirSync(resolversDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+    for (const typeName of typeNames) {
+        const typeDir = new URL(`${typeName}/`, resolversDir);
+        var functions = functionsConfigFrom(typeDir);
+        
+        if (Object.keys(functions).length > 0) {
+            if (!graghql.resolvers) {
+                graghql.resolvers = {};
+            }
+
+            graghql.resolvers[typeName] = functions;
+        }
+    }
+
+    // Deploy.
+    if (graghql.schema != null, graghql.resolvers != null) {
+        await put('/_config/graphql', graghql, ContentType.json);
+    }
+}
+
+function functionsConfigFrom(directoryUrl) {
     var functions = {};
 
     // Read config.
-    const functionsDir = new URL('../gateway/functions/', import.meta.url);
+    const functionsDir = directoryUrl;
     const functionNames = fs.readdirSync(functionsDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
@@ -324,64 +371,12 @@ async function deployFunctionsConfig() {
         if (config != null, code != null) {
             functions[functionName] = {
                 type: config.type,
-                parameters: config.args,
+                args: config.args,
                 allow: config.allow,
                 code: code
             };
         }
     }
 
-    // Deploy
-    if (Object.keys(functions).length > 0) {
-        await put('/_config/functions', functions, ContentType.json);
-    }
-}
-
-// GraphQL
-if (include.graghql) { await deployGraphQLConfig(); }
-async function deployGraphQLConfig() {
-    var graghql = {}
-    
-    // Read schema.
-    const graphqlDir = new URL('../gateway/graphql/', import.meta.url);
-    const schemaFile = new URL('schema.graphql', graphqlDir);
-    if (fs.existsSync(schemaFile)) {
-        graghql.schema = String(fs.readFileSync(schemaFile));
-    }
-
-    // Read resolvers.
-    const resolversDir = new URL(`resolvers/`, graphqlDir);
-    const typeNames = fs.readdirSync(resolversDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-    for (const typeName of typeNames) {
-        const typeDir = new URL(`${typeName}/`, resolversDir);
-
-        const resolverFileNames = fs.readdirSync(typeDir, { withFileTypes: true })
-            .filter(dirent => path.parse(dirent.name).ext == '.js')
-            .map(dirent => dirent.name);
-        for (const resolverFileName of resolverFileNames) {
-            const resolverFile = new URL(resolverFileName, typeDir);
-
-            // Include in deployment.
-            if (fs.existsSync(resolverFile)) {
-                if (graghql.resolvers == null) {
-                    graghql.resolvers = {};
-                }
-
-                if (graghql.resolvers[typeName] == null) {
-                    graghql.resolvers[typeName] = {};
-                }
-
-                const resolverName = path.parse(resolverFileName).name;
-                const code = String(fs.readFileSync(resolverFile));
-                graghql.resolvers[typeName][resolverName] = code;
-            }
-        }
-    }
-
-    // Deploy.
-    if (graghql.schema != null, graghql.resolvers != null) {
-        await put('/_config/graphql', graghql, ContentType.json);
-    }
+    return functions;
 }

@@ -1,0 +1,7 @@
+{
+    "type": "javascript",
+    "allow": {
+        "channels": ["orders"],
+        "roles": ["customer"]
+    }
+}

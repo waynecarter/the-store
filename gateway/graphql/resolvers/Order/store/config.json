@@ -1,0 +1,6 @@
+{
+    "type": "javascript",
+    "allow": {
+        "channels": ["stores"]
+    }
+}
