@@ -22,19 +22,6 @@ class App {
         }, { once : true });
     }
 
-    async login(user, password) {
-        const response = await fetch(new URL('_session', this.#url), {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Authorization': `Basic ${btoa(`${user}:${password}`)}`
-            }
-        })
-        
-        return response.ok;
-    }
-
     async graphql(gql) {
         const response = await fetch(new URL('_graphql', this.#url), {
             method: 'POST',
@@ -42,12 +29,16 @@ class App {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Request-Type': 'GraphQL',
-                // 'Authorization': 'Basic ' + btoa('admin:password')
+                'X-Request-Type': 'GraphQL'
             },
             body: JSON.stringify(gql),
         })
         const json = await response.json();
+
+        if (json, json.errors) {
+            console.error(JSON.stringify(json.errors));
+        }
+
         return json ? json.data : null;
     }
 }
