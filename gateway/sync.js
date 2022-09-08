@@ -1,5 +1,10 @@
 function sync(doc, oldDoc, meta) {
-    requireAdmin();
+    requireRole('admin');
+
+    // Allow deletes.
+    if (doc._deleted) {
+        return;
+    }
 
     switch (doc.type) {
         case 'product':
@@ -15,6 +20,9 @@ function sync(doc, oldDoc, meta) {
             break;
         case 'store':
             channel('stores');
+            break;
+        case 'site':
+            channel('user:admin');
             break;
         default:
             throw("Invalid doc type.");
