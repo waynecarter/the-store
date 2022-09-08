@@ -175,11 +175,13 @@ async function deployDatabaseConfig() {
     } else {
         remoteConfig = await get('/_config', true /* silent */);
         remoteConfig = JSON.parse(remoteConfig.body);
-        const configChanged = (
-            remoteConfig.name !== localConfig.name
-            || remoteConfig.bucket != localConfig.bucket
-            || remoteConfig.num_index_replicas != localConfig.num_index_replicas
-        )
+        const configChanged = (function() {
+            for (const key of Object.keys(localConfig)) {
+                if (remoteConfig[key] != localConfig[key]) {
+                    return true;
+                }
+            }
+        })() || false;
         if (configChanged) {
             // If the config has changed, update it.
             await put('/_config', localConfig, ContentType.json);
