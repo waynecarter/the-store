@@ -109,5 +109,12 @@ query {
 ### REST ###
 ############
 
-### Get Cart
-GET http://{{user}}:{{password}}@localhost:4984/retail/cart:admin HTTP/1.1
+### Get Products
+POST http://{{user}}:{{password}}@localhost:4984/retail/_function/products HTTP/1.1
+Content-Type: application/json
+
+{
+    "search": null,
+    "offset": 0,
+    "limit": 3
+}
