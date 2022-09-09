@@ -11,8 +11,6 @@ function orderCart(context, args, parent, info) {
         throw('Cart is empty.');
     }
 
-    // HACK: Need a way to generate unique IDs. Use date for now.
-    var orderId = 'order:' + Date.now();
     var order = {
         type: 'order',
         customerId: context.user.name,
@@ -20,11 +18,15 @@ function orderCart(context, args, parent, info) {
         items: cart.items,
         status: 'AWAITING_FULLFILLMENT'
     };
-    context.admin.defaultCollection.save(orderId, order);
+    var orderId = context.admin.defaultCollection.save(null, order);
 
-    delete cart.items;
-    context.admin.defaultCollection.save(cartId, cart);
+    if (orderId) {
+        delete cart.items;
+        context.admin.defaultCollection.save(cartId, cart);
 
-    order.id = orderId;
-    return order;
+        order.id = orderId;
+        return order;
+    } else {
+        throw('Failed to create order.')
+    }
 }
