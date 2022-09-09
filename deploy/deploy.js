@@ -372,36 +372,42 @@ function functionsConfigFrom(directoryUrl) {
     for (const functionName of functionNames) {
         const functionDir = new URL(`${functionName}/`, functionsDir);
         
+        // Derive type from code file extension.
+        const type = ( () => {
+            if (fs.existsSync(new URL('code.js', functionDir))) {
+                return 'javascript';
+            } else if (fs.existsSync(new URL('code.sql', functionDir))) {
+                return 'query';
+            }
+        })()
+
         // Read config.
         const config = (function() {
             const file = new URL('config.json', functionDir);
             if (fs.existsSync(file)) {
                 return JSON.parse(fs.readFileSync(file));
             }
-            return null;
         })();
 
         // Read code.
         const code = (function() {
-            if (config != null) {
+            if (type) {
                 const file = (function() {
-                    switch (config.type) {
+                    switch (type) {
                         case 'javascript': return new URL('code.js', functionDir);
                         case 'query': return new URL('code.sql', functionDir);
                         default: return null;
                     }
                 })();
                 
-                if (fs.existsSync(file)) {
-                    return String(fs.readFileSync(file));
-                }
+                return String(fs.readFileSync(file));
             }
         })();
 
         // Include.
-        if (config != null, code != null) {
+        if (type, config, code) {
             functions[functionName] = {
-                type: config.type,
+                type: type,
                 args: config.args,
                 allow: config.allow,
                 code: code
