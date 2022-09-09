@@ -35,7 +35,7 @@ class App {
         })
         const json = await response.json();
 
-        if (json, json.errors) {
+        if (json && json.errors) {
             console.error(JSON.stringify(json.errors));
         }
 
