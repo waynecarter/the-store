@@ -333,8 +333,39 @@ async function deployGraphQLConfig() {
 function functionsConfigFrom(directoryUrl) {
     var functions = {};
 
-    // Read config.
+    // Read in the config for functions that are defined as an individual file.
     const functionsDir = directoryUrl;
+    const functionFileNames = fs.readdirSync(functionsDir, { withFileTypes: true })
+        .filter(dirent => {
+            console.log(dirent.name);
+            return path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql'
+        })
+        .map(dirent => dirent.name);
+    for (const functionFileName of functionFileNames) {
+        const code = (function () {
+            const functionFile = new URL(functionFileName, functionsDir);
+            
+            if (fs.existsSync(functionFile)) {
+                return String(fs.readFileSync(functionFile));
+            }
+        })()
+        
+        // Include.
+        if (code) {
+            const functionName = path.parse(functionFileName).name;
+            functions[functionName] = {
+                type: ( () => {
+                    switch (path.parse(functionFileName).ext) {
+                        case '.js': return 'javascript';
+                        case '.sql': return 'query';
+                    }
+                })(),
+                code: code
+            }
+        }
+    }
+
+    // Read in the config for functions that are defined as a directory w/ code and config.
     const functionNames = fs.readdirSync(functionsDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
@@ -351,7 +382,7 @@ function functionsConfigFrom(directoryUrl) {
         })();
 
         // Read code.
-        var code = (function() {
+        const code = (function() {
             if (config != null) {
                 const file = (function() {
                     switch (config.type) {
