@@ -1,5 +1,5 @@
 function sync(doc, oldDoc, meta) {
-    requireRole('admin');
+    requireAdmin();
 
     // Allow deletes.
     if (doc._deleted) {
