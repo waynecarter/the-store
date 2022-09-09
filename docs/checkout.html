@@ -37,7 +37,7 @@
         const app = new App();
         
         async function submitOrder(button) {
-            app.ui.showLoadingForCall(button, async function () {
+            app.ui.callFrom(button, async function () {
                 const storeId = document.getElementById('store').value;
                 const order = await app.mutation.orderCart(storeId);
                 

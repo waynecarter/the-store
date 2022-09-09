@@ -64,8 +64,8 @@ class Query {
             `,
             variables: {
                 search: search,
-                offset: `${offset || 0}`,
-                limit: `${limit || 20}`
+                offset: 0,
+                limit: 20
             }
         }) || {};
         
@@ -207,17 +207,26 @@ class Mutation {
 }
 
 class UI {
-    async showLoadingForCall(button, func) {
+    async callFrom(button, func) {
         button.disabled = true;
         const timeout = window.setTimeout(function () {
             button.classList.add('loading');
         }, 200);
         button.innerHTML = `<span>${button.innerText}</span>`;
         
-        await func();
+        const result = await func();
 
         window.clearTimeout(timeout);
         button.classList.remove('loading');
         button.disabled = false;
+
+        if (result) {
+            button.classList.add('success');
+            window.setTimeout(function () {
+                button.classList.remove('success');
+            }, 2000);
+        }
+
+        return result;
     }
 }
