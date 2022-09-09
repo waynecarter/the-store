@@ -275,7 +275,7 @@ header > h1 {
 
     border: 0;
     margin: 0;
-    padding: 0;
+    padding: 0.625em 38px;
     box-sizing: border-box;
 
     font: inherit;
@@ -290,6 +290,19 @@ header > h1 {
     background-size: 20px;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.search > input:focus,
+.search > input:valid {
+    background-position-x: 10px;
+}
+
+.search > input::placeholder {
+    color: transparent;
+}
+
+.search > input:focus::placeholder {
+    color: #c0c0c0;
 }
 
 .search > input:focus,
