@@ -1,1 +1,7 @@
-<svg version="1.1" viewBox="0.0 0.0 40.0 40.0" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><clipPath id="p.0"><path d="m0 0l40.0 0l0 40.0l-40.0 0l0 -40.0z" clip-rule="nonzero"/></clipPath><g clip-path="url(#p.0)"><path fill="#000000" fill-opacity="0.0" d="m0 0l40.0 0l0 40.0l-40.0 0z" fill-rule="evenodd"/><path fill="#000000" d="m40.0 2.7244093l-20.0 34.551178l-20.0 -34.551178z" fill-rule="evenodd"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" fill="#000" viewBox="0.0 0.0 40.0 40.0">
+    <g>
+        <path fill-opacity="0.0" d="m0 0l40.0 0l0 40.0l-40.0 0z" fill-rule="evenodd"/>
+        <path d="m40.0 2.7244093l-20.0 34.551178l-20.0 -34.551178z" fill-rule="evenodd"/>
+    </g>
+</svg>
