@@ -176,11 +176,11 @@ async function deployDatabaseConfig() {
         remoteConfig = await get('/_config', true /* silent */);
         remoteConfig = JSON.parse(remoteConfig.body);
         const configChanged = (function() {
-            for (const key of Object.keys(localConfig)) {
+            Object.keys(localConfig).forEach(key => {
                 if (remoteConfig[key] != localConfig[key]) {
                     return true;
                 }
-            }
+            });
         })() || false;
         if (configChanged) {
             // If the config has changed, update it.
@@ -336,10 +336,7 @@ function functionsConfigFrom(directoryUrl) {
     // Read in the config for functions that are defined as an individual file.
     const functionsDir = directoryUrl;
     const functionFileNames = fs.readdirSync(functionsDir, { withFileTypes: true })
-        .filter(dirent => {
-            console.log(dirent.name);
-            return path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql'
-        })
+        .filter(dirent => path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql' )
         .map(dirent => dirent.name);
     for (const functionFileName of functionFileNames) {
         const code = (function () {
@@ -381,14 +378,6 @@ function functionsConfigFrom(directoryUrl) {
             }
         })()
 
-        // Read config.
-        const config = (function() {
-            const file = new URL('config.json', functionDir);
-            if (fs.existsSync(file)) {
-                return JSON.parse(fs.readFileSync(file));
-            }
-        })();
-
         // Read code.
         const code = (function() {
             if (type) {
@@ -402,16 +391,32 @@ function functionsConfigFrom(directoryUrl) {
                 
                 return String(fs.readFileSync(file));
             }
-        })();
+        })()
 
         // Include.
-        if (type, config, code) {
+        if (type && code) {
+            var functionConfig = {
+                type: type,
+                code: code
+            }
+
+            // Read config.
+            const config = (function() {
+                const file = new URL('config.json', functionDir);
+                if (fs.existsSync(file)) {
+                    return JSON.parse(fs.readFileSync(file));
+                }
+            })() || {}
+            Object.keys(config).forEach(key => {
+                functionConfig[key] = config[key];
+            })
+
             functions[functionName] = {
                 type: type,
                 args: config.args,
                 allow: config.allow,
                 code: code
-            };
+            }
         }
     }
 
