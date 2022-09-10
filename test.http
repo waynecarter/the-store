@@ -10,7 +10,7 @@ POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
 X-Request-Type: GraphQL
 
 query {
-    products(offset: 0, limit: 5) {
+    products(search: "Hat", offset: 0, limit: 5) {
         id,
         name,
         image,
