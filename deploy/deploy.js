@@ -333,8 +333,10 @@ async function deployGraphQLConfig() {
 function functionsConfigFrom(directoryUrl) {
     var functions = {};
 
-    // Read in the config for functions that are defined as an individual file.
     const functionsDir = directoryUrl;
+    if (!fs.existsSync(functionsDir)) { return functions; }
+
+    // Read in the config for functions that are defined as an individual file.
     const functionFileNames = fs.readdirSync(functionsDir, { withFileTypes: true })
         .filter(dirent => path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql' )
         .map(dirent => dirent.name);
