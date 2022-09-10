@@ -64,8 +64,8 @@ class Query {
             `,
             variables: {
                 search: search,
-                offset: 0,
-                limit: 20
+                offset: offset || 0,
+                limit: limit || 20
             }
         }) || {};
         
