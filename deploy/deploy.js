@@ -62,6 +62,7 @@ async function send(method, path, body, contentType, silent) {
 
             response.on('end', () => {
                 resolve({
+                    ok: response.statusCode == 200,
                     httpVersion: response.httpVersion,
                     statusCode: response.statusCode,
                     statusMessage: response.statusMessage,
@@ -75,6 +76,7 @@ async function send(method, path, body, contentType, silent) {
 
             response.on('error', (error) => {
                 reject({
+                    ok: response.statusCode == 200,
                     httpVersion: response.httpVersion,
                     statusCode: response.statusCode,
                     statusMessage: response.statusMessage,
@@ -289,8 +291,14 @@ async function deployFunctionsConfig() {
     var functions = functionsConfigFrom(functionsDir);
 
     // Deploy
+    const configPath = '/_config/functions';
     if (Object.keys(functions).length > 0) {
-        await put('/_config/functions', functions, ContentType.json);
+        await put(configPath, functions, ContentType.json);
+    } else {
+        const remoteConfig = await get(configPath, true /* silent */);
+        if (remoteConfig.ok) {
+            await del(configPath);
+        }
     }
 }
 
@@ -299,34 +307,44 @@ if (include.graghql) { await deployGraphQLConfig(); }
 async function deployGraphQLConfig() {
     var graghql = {}
     
-    // Read schema.
     const graphqlDir = new URL('../gateway/graphql/', import.meta.url);
-    const schemaFile = new URL('schema.graphql', graphqlDir);
-    if (fs.existsSync(schemaFile)) {
-        graghql.schema = String(fs.readFileSync(schemaFile));
-    }
+    if (fs.existsSync(graphqlDir)) {
+        // Read schema.
+        const schemaFile = new URL('schema.graphql', graphqlDir);
+        if (fs.existsSync(schemaFile)) {
+            graghql.schema = String(fs.readFileSync(schemaFile));
+        }
 
-    // Read resolvers.
-    const resolversDir = new URL(`resolvers/`, graphqlDir);
-    const typeNames = fs.readdirSync(resolversDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-    for (const typeName of typeNames) {
-        const typeDir = new URL(`${typeName}/`, resolversDir);
-        var functions = functionsConfigFrom(typeDir);
-        
-        if (Object.keys(functions).length > 0) {
-            if (!graghql.resolvers) {
-                graghql.resolvers = {};
+        // Read resolvers.
+        const resolversDir = new URL(`resolvers/`, graphqlDir);
+        if (fs.existsSync(resolversDir)) {
+            const typeNames = fs.readdirSync(resolversDir, { withFileTypes: true })
+                .filter(dirent => dirent.isDirectory())
+                .map(dirent => dirent.name);
+            for (const typeName of typeNames) {
+                const typeDir = new URL(`${typeName}/`, resolversDir);
+                var functions = functionsConfigFrom(typeDir);
+                
+                if (Object.keys(functions).length > 0) {
+                    if (!graghql.resolvers) {
+                        graghql.resolvers = {};
+                    }
+
+                    graghql.resolvers[typeName] = functions;
+                }
             }
-
-            graghql.resolvers[typeName] = functions;
         }
     }
 
     // Deploy.
+    const configPath = '/_config/graphql';
     if (graghql.schema != null, graghql.resolvers != null) {
-        await put('/_config/graphql', graghql, ContentType.json);
+        await put(configPath , graghql, ContentType.json);
+    } else {
+        const remoteConfig = await get(configPath, true /* silent */);
+        if (remoteConfig.ok) {
+            await del(configPath);
+        }
     }
 }
 
@@ -334,90 +352,90 @@ function functionsConfigFrom(directoryUrl) {
     var functions = {};
 
     const functionsDir = directoryUrl;
-    if (!fs.existsSync(functionsDir)) { return functions; }
-
-    // Read in the config for functions that are defined as an individual file.
-    const functionFileNames = fs.readdirSync(functionsDir, { withFileTypes: true })
-        .filter(dirent => path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql' )
-        .map(dirent => dirent.name);
-    for (const functionFileName of functionFileNames) {
-        const code = (function () {
-            const functionFile = new URL(functionFileName, functionsDir);
+    if (fs.existsSync(functionsDir)) {
+        // Read in the config for functions that are defined as an individual file.
+        const functionFileNames = fs.readdirSync(functionsDir, { withFileTypes: true })
+            .filter(dirent => path.parse(dirent.name).ext == '.js' || path.parse(dirent.name).ext == '.sql' )
+            .map(dirent => dirent.name);
+        for (const functionFileName of functionFileNames) {
+            const code = (function () {
+                const functionFile = new URL(functionFileName, functionsDir);
+                
+                if (fs.existsSync(functionFile)) {
+                    return String(fs.readFileSync(functionFile));
+                }
+            })()
             
-            if (fs.existsSync(functionFile)) {
-                return String(fs.readFileSync(functionFile));
-            }
-        })()
-        
-        // Include.
-        if (code) {
-            const functionName = path.parse(functionFileName).name;
-            functions[functionName] = {
-                type: ( () => {
-                    switch (path.parse(functionFileName).ext) {
-                        case '.js': return 'javascript';
-                        case '.sql': return 'query';
-                    }
-                })(),
-                code: code
+            // Include.
+            if (code) {
+                const functionName = path.parse(functionFileName).name;
+                functions[functionName] = {
+                    type: ( () => {
+                        switch (path.parse(functionFileName).ext) {
+                            case '.js': return 'javascript';
+                            case '.sql': return 'query';
+                        }
+                    })(),
+                    code: code
+                }
             }
         }
-    }
 
-    // Read in the config for functions that are defined as a directory w/ code and config.
-    const functionNames = fs.readdirSync(functionsDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-    for (const functionName of functionNames) {
-        const functionDir = new URL(`${functionName}/`, functionsDir);
-        
-        // Derive type from code file extension.
-        const type = ( () => {
-            if (fs.existsSync(new URL('code.js', functionDir))) {
-                return 'javascript';
-            } else if (fs.existsSync(new URL('code.sql', functionDir))) {
-                return 'query';
-            }
-        })()
-
-        // Read code.
-        const code = (function() {
-            if (type) {
-                const file = (function() {
-                    switch (type) {
-                        case 'javascript': return new URL('code.js', functionDir);
-                        case 'query': return new URL('code.sql', functionDir);
-                        default: return null;
-                    }
-                })();
-                
-                return String(fs.readFileSync(file));
-            }
-        })()
-
-        // Include.
-        if (type && code) {
-            var functionConfig = {
-                type: type,
-                code: code
-            }
-
-            // Read config.
-            const config = (function() {
-                const file = new URL('config.json', functionDir);
-                if (fs.existsSync(file)) {
-                    return JSON.parse(fs.readFileSync(file));
+        // Read in the config for functions that are defined as a directory w/ code and config.
+        const functionNames = fs.readdirSync(functionsDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+        for (const functionName of functionNames) {
+            const functionDir = new URL(`${functionName}/`, functionsDir);
+            
+            // Derive type from code file extension.
+            const type = ( () => {
+                if (fs.existsSync(new URL('code.js', functionDir))) {
+                    return 'javascript';
+                } else if (fs.existsSync(new URL('code.sql', functionDir))) {
+                    return 'query';
                 }
-            })() || {}
-            Object.keys(config).forEach(key => {
-                functionConfig[key] = config[key];
-            })
+            })()
 
-            functions[functionName] = {
-                type: type,
-                args: config.args,
-                allow: config.allow,
-                code: code
+            // Read code.
+            const code = (function() {
+                if (type) {
+                    const file = (function() {
+                        switch (type) {
+                            case 'javascript': return new URL('code.js', functionDir);
+                            case 'query': return new URL('code.sql', functionDir);
+                            default: return null;
+                        }
+                    })();
+                    
+                    return String(fs.readFileSync(file));
+                }
+            })()
+
+            // Include.
+            if (type && code) {
+                var functionConfig = {
+                    type: type,
+                    code: code
+                }
+
+                // Read config.
+                const config = (function() {
+                    const file = new URL('config.json', functionDir);
+                    if (fs.existsSync(file)) {
+                        return JSON.parse(fs.readFileSync(file));
+                    }
+                })() || {}
+                Object.keys(config).forEach(key => {
+                    functionConfig[key] = config[key];
+                })
+
+                functions[functionName] = {
+                    type: type,
+                    args: config.args,
+                    allow: config.allow,
+                    code: code
+                }
             }
         }
     }
