@@ -72,6 +72,19 @@ class Query {
         return data.products || [];
     }
 
+    async inventory() {
+        const data = await this.#app.graphql({
+            query: `{
+                products {
+                    name
+                    quantity
+                }
+            }`
+        }) || {};
+        
+        return data.products || [];
+    }
+
     async cart() {
         const data = await this.#app.graphql({
             query: `{

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Inventory - The Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+    <link rel="icon" href="images/the.svg">
+    <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/app.js"></script>
+    <script src="scripts/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1><a href="index.html"><b>The</b> Store</a></h1>
+        <a class="cart" href="cart.html"></a>
+    </header>
+    <div class="subheader">
+        <h2>Inventory.</h2>
+    </div>
+    <div class="content">
+        <canvas id="chart" style="width:100%;"></canvas>
+    </div>
+
+    <script>
+        const app = new App();
+
+        app.query.inventory().then( inventory => {
+            const labels = inventory.map( item => item.name );
+            const values = inventory.map( item => item.quantity );
+            
+            new Chart("chart", {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        axis: 'y',
+                        data: values,
+                        backgroundColor: 'rgba(0, 113, 227, 0.5)',
+                        borderColor: 'rgb(0, 113, 227)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {display: false}
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

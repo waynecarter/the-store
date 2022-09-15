@@ -45,10 +45,13 @@
                         <td><h3>Status</h3></td>
                         <td>${ ( function() {
                             switch (order.status) {
-                                case 'AWAITING_FULLFILLMENT': return 'Awaiting Fullfillment';
-                                case 'AWAITING_PICKUP': return 'Ready for Pickup';
-                                case 'COMPLETED': return 'Complete';
-                                default: return 'Unknown';
+                                case 'PREPARING_TO_SHIP': return 'Preparing to Ship';
+                                case 'SHIPPED': return 'Shipped';
+                                case 'DELIVERED': return 'Delivered';
+                                case 'PREPARING_FOR_PICKUP': return 'Preparing for Pickup';
+                                case 'READY_FOR_PICKUP': return 'Ready for Pickup';
+                                case 'PICKED_UP': return 'Picked Up';
+                                default: return 'Processing';
                             }
                         })()}</td>
                     </tr>

@@ -3,6 +3,7 @@ type Product {
     name: String!
     image: String!
     price: Float!
+    quantity: Float!
 }
 
 type Store {
@@ -29,9 +30,13 @@ type Order {
 }
 
 enum OrderStatus {
-    AWAITING_FULLFILLMENT
-    AWAITING_PICKUP
-    COMPLETED
+    PROCESSING
+    PREPARING_TO_SHIP
+    SHIPPED
+    DELIVERED
+    PREPARING_FOR_PICKUP
+    READY_FOR_PICKUP
+    PICKED_UP
 }
 
 type Query {

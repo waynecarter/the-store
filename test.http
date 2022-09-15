@@ -14,7 +14,8 @@ query {
         id,
         name,
         image,
-        price
+        price,
+        quantity
     }
 }
 
