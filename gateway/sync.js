@@ -21,8 +21,8 @@ function sync(doc, oldDoc, meta) {
         case 'store':
             channel('stores');
             break;
-        case 'site':
-            channel('user:admin');
+        case 'inventory':
+            channel('inventory');
             break;
         default:
             throw("Invalid doc type.");

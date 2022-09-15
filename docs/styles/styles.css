@@ -253,7 +253,16 @@ header > h1 {
 }
 
 .subheader h2 {
-    margin: 0;
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+
+.subheader a {
+    color: inherit;
+}
+
+.subheader a.active {
+    color: rgb(0, 113, 227);
 }
 
 /* Search */

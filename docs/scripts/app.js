@@ -15,7 +15,7 @@ class App {
         this.mutation = new Mutation(this, function() {
             refreshCartButton();
         });
-        this.ui = new UI();
+        this.ui = new UI(this);
         
         window.addEventListener('load', () => {
             refreshCartButton();
@@ -72,17 +72,41 @@ class Query {
         return data.products || [];
     }
 
-    async inventory() {
+    async store(id) {
         const data = await this.#app.graphql({
-            query: `{
-                products {
-                    name
-                    quantity
+            query: `
+                query Store($id: ID!) {
+                    store(id: $id) {
+                        name
+                    }
                 }
-            }`
+            `,
+            variables: {
+                id: id
+            }
         }) || {};
         
-        return data.products || [];
+        return data.store || [];
+    }
+
+    async inventory(storeId) {
+        const data = await this.#app.graphql({
+            query: `
+                query Inventory($storeId: ID) {
+                    inventory(storeId: $storeId) {
+                        product {
+                            name
+                        }
+                        quantity
+                    }
+                }
+            `,
+            variables: {
+                storeId: storeId
+            }
+        }) || {};
+        
+        return data.inventory || [];
     }
 
     async cart() {
@@ -150,6 +174,33 @@ class Query {
         }) || {};
         
         return data.order;
+    }
+
+    async orders(storeId) {
+        const data = await this.#app.graphql({
+            query: `
+                query Orders($storeId: ID!) {
+                    orders(storeId: $storeId) {
+                        id,
+                        status,
+                        items {
+                            product {
+                                id,
+                                name,
+                                image,
+                                price
+                            },
+                            count
+                        }
+                    }
+                }
+            `,
+            variables: {
+                storeId: storeId
+            }
+        }) || {};
+        
+        return data.orders;
     }
 }
 
@@ -220,6 +271,22 @@ class Mutation {
 }
 
 class UI {
+    constructor(app) {
+        window.addEventListener('load', async () => {
+            // If a storeId is specified in the search params, fill in the
+            // name of the store on the UI.
+            const storeId = new URL(document.location).searchParams.get("store");
+            if (storeId) {
+                app.query.store(storeId).then(function (store) {
+                    if (store) {
+                        const titleSuffixLabel = document.querySelector('header .title-suffix');
+                        titleSuffixLabel.innerText = ` / ${store.name}`;
+                    }
+                })
+            }
+        }, { once : true });
+    }
+
     async callFrom(button, func) {
         button.disabled = true;
         const timeout = window.setTimeout(function () {

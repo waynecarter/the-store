@@ -14,8 +14,7 @@ query {
         id,
         name,
         image,
-        price,
-        quantity
+        price
     }
 }
 
@@ -103,6 +102,20 @@ query {
             },
             count
         }
+    }
+}
+
+### Get Inventory
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+query {
+    inventory(storeId: "store1") {
+        product {
+            id
+            name
+        },
+        quantity
     }
 }
 

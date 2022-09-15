@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Order - The Store</title>
+    <title>Order - Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 
@@ -27,7 +27,7 @@
         const app = new App();
         
         const orderId = (new URL(document.location)).searchParams.keys().next().value;
-        app.query.order(orderId).then(function (order) {
+        app.query.order(orderId).then( order => {
             if (!order) {
                 const subheaderLabel = document.querySelector('.subheader h2');
                 subheaderLabel.innerText = 'Order not found.'

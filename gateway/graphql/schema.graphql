@@ -3,7 +3,6 @@ type Product {
     name: String!
     image: String!
     price: Float!
-    quantity: Float!
 }
 
 type Store {
@@ -29,6 +28,12 @@ type Order {
     status: OrderStatus!
 }
 
+type Inventory {
+    product: Product!
+    store: Store
+    quantity: Float!
+}
+
 enum OrderStatus {
     PROCESSING
     PREPARING_TO_SHIP
@@ -43,6 +48,9 @@ type Query {
     products(search: String, offset: Int, limit: Int): [Product!]
     cart: Cart
     order(id: ID!): Order
+    store(id: ID!): Store
+    orders(storeId: ID!): [Order!]
+    inventory(storeId: ID): [Inventory!]
 }
 
 type Mutation {

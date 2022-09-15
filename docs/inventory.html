@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Inventory - The Store</title>
+    <title>Inventory - Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 
@@ -20,7 +20,7 @@
         <a class="cart" href="cart.html"></a>
     </header>
     <div class="subheader">
-        <h2>Inventory.</h2>
+        <h2><a href="?">Inventory</a></h2> <a id="store1-link" href="?store=store1">Miami</a> • <a id="store2-link" href="?store=store2">New York</a> • <a id="store3-link" href="?store=store3">San Francisco</a>
     </div>
     <div class="content">
         <canvas id="chart" style="width:100%;"></canvas>
@@ -29,8 +29,9 @@
     <script>
         const app = new App();
 
-        app.query.inventory().then( inventory => {
-            const labels = inventory.map( item => item.name );
+        const storeId = new URL(document.location).searchParams.get("store");
+        app.query.inventory(storeId).then( inventory => {
+            const labels = inventory.map( item => item.product.name );
             const values = inventory.map( item => item.quantity );
             
             new Chart("chart", {
@@ -47,12 +48,25 @@
                 },
                 options: {
                     indexAxis: 'y',
+                    scales: {
+                        x: {
+                            position: 'top',
+                            max: 300
+                        }
+                    },
+                    animation: false,
                     plugins: {
                         legend: {display: false}
                     }
                 }
             });
         });
+
+        if (storeId) {
+            document.querySelector(`.subheader #${storeId}-link`).classList.add('active');
+        } else {
+            document.querySelector('.subheader h2 > a').classList.add('active');
+        }
     </script>
 </body>
 

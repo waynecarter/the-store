@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+    <link rel="icon" href="images/the.svg">
+    <link rel=”mask-icon” href=”images/the.svg” color=”#000000">
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/app.js"></script>
+    <script src="scripts/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1><a href="index.html"><b>The</b> Store</a><span class="title-suffix"/></h1>
+        <a class="cart" href="cart.html"></a>
+    </header>
+    <div class="subheader">
+        <h2>Orders</h2>
+    </div>
+    <div class="content">
+        <div>
+
+        </div>
+    </div>
+
+    <script>
+        const app = new App();
+
+        const storeId = new URL(document.location).searchParams.get("storeId");
+        app.query.orders(storeId).then( orders => {
+            const content = document.querySelector('.content');
+            content.innerHTML = `
+                <pre>${JSON.stringify(orders)}</pre>
+            `;
+        });
+    </script>
+</body>
+
+</html>
