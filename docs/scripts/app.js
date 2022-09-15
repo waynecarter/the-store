@@ -89,26 +89,6 @@ class Query {
         return data.store || [];
     }
 
-    async inventory(storeId) {
-        const data = await this.#app.graphql({
-            query: `
-                query Inventory($storeId: ID) {
-                    inventory(storeId: $storeId) {
-                        product {
-                            name
-                        }
-                        quantity
-                    }
-                }
-            `,
-            variables: {
-                storeId: storeId
-            }
-        }) || {};
-        
-        return data.inventory || [];
-    }
-
     async cart() {
         const data = await this.#app.graphql({
             query: `{
@@ -201,6 +181,27 @@ class Query {
         }) || {};
         
         return data.orders;
+    }
+
+    async inventory(storeId) {
+        const data = await this.#app.graphql({
+            query: `
+                query Inventory($storeId: ID) {
+                    inventory(storeId: $storeId) {
+                        product {
+                            name
+                            image
+                        }
+                        quantity
+                    }
+                }
+            `,
+            variables: {
+                storeId: storeId
+            }
+        }) || {};
+        
+        return data.inventory || [];
     }
 }
 
