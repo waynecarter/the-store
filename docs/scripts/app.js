@@ -15,7 +15,7 @@ class App {
         this.mutation = new Mutation(this, function() {
             refreshCartButton();
         });
-        this.ui = new UI(this);
+        this.ui = new UI();
         
         window.addEventListener('load', () => {
             refreshCartButton();
@@ -272,22 +272,6 @@ class Mutation {
 }
 
 class UI {
-    constructor(app) {
-        window.addEventListener('load', async () => {
-            // If a storeId is specified in the search params, fill in the
-            // name of the store on the UI.
-            const storeId = new URL(document.location).searchParams.get("store");
-            if (storeId) {
-                app.query.store(storeId).then(function (store) {
-                    if (store) {
-                        const titleSuffixLabel = document.querySelector('header .title-suffix');
-                        titleSuffixLabel.innerText = ` / ${store.name}`;
-                    }
-                })
-            }
-        }, { once : true });
-    }
-
     async callFrom(button, func) {
         button.disabled = true;
         const timeout = window.setTimeout(function () {
