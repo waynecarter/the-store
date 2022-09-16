@@ -21,19 +21,23 @@
         <a class="cart" href="cart.html"></a>
     </header>
     <div class="subheader">
-        <h2><a href="inventory.html">Inventory</a></h2> <a id="store1-link" href="?store=store1">Miami</a> • <a id="store2-link" href="?store=store2">New York</a> • <a id="store3-link" href="?store=store3">San Francisco</a>
+        <h2><a href="javascript: showInventory();">Inventory</a></h2> <a id="store1-link" href="javascript: showInventory('store1');">Miami</a> • <a id="store2-link" href="javascript: showInventory('store2');">New York</a> • <a id="store3-link" href="javascript: showInventory('store3');">San Francisco</a>
     </div>
-    <div class="content">
-        <canvas id="chart" style="width:100%;"></canvas>
-    </div>
+    <div class="content"></div>
 
     <script>
         const app = new App();
 
         const storeId = new URL(document.location).searchParams.get("store");
-        app.query.inventory(storeId).then( inventory => {
+        showInventory(storeId);
+
+        async function showInventory(storeId) {
+            const inventory = await app.query.inventory(storeId);
             const labels = inventory.map( item => `${item.product.name} ${item.product.image}` );
             const values = inventory.map( item => item.quantity );
+
+            const content = document.querySelector('.content');
+            content.innerHTML = '<canvas id="chart" style="width:100%;"></canvas>';
             
             new Chart("chart", {
                 type: "bar",
@@ -69,13 +73,15 @@
                     }
                 }
             });
-        });
 
-        if (storeId) {
-            document.querySelector(`.subheader #${storeId}-link`).classList.add('active');
-        } else {
-            document.querySelector('.subheader h2 > a').classList.add('active');
+            document.querySelectorAll('.subheader a').forEach( link => link.classList.remove('active'));
+            if (storeId) {
+                document.querySelector(`.subheader #${storeId}-link`).classList.add('active');
+            } else {
+                document.querySelector('.subheader h2 > a').classList.add('active');
+            }
         }
+        
     </script>
 </body>
 
