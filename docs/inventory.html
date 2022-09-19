@@ -23,10 +23,13 @@
     <div class="subheader">
         <h2><a href="javascript: showInventory();">Inventory</a></h2> <a id="store1-link" href="javascript: showInventory('store1');">Miami</a> • <a id="store2-link" href="javascript: showInventory('store2');">New York</a> • <a id="store3-link" href="javascript: showInventory('store3');">San Francisco</a>
     </div>
-    <div class="content"></div>
+    <div class="content">
+        <canvas id="chart" style="width:100%;"></canvas>
+    </div>
 
     <script>
         const app = new App();
+        var chart = null;
 
         const storeId = new URL(document.location).searchParams.get("store");
         showInventory(storeId);
@@ -35,45 +38,48 @@
             const inventory = await app.query.inventory(storeId);
             const labels = inventory.map( item => `${item.product.name} ${item.product.image}` );
             const values = inventory.map( item => item.quantity );
-
-            const content = document.querySelector('.content');
-            content.innerHTML = '<canvas id="chart" style="width:100%;"></canvas>';
             
-            new Chart("chart", {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        axis: 'y',
-                        data: values,
-                        backgroundColor: 'rgba(0, 113, 227, 0.5)',
-                        borderColor: 'rgb(0, 113, 227)',
-                        borderWidth: 1,
-                        datalabels: {
-                            color: 'white',
-                            anchor: 'start',
-                            align: 'end',
-                            clamp: true
-                        }
-                    }]
-                },
-                plugins: [ChartDataLabels],
-                options: {
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            position: 'top',
-                            max: 300
-                        }
+            if (chart) {
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = values;
+                chart.update();
+            } else {
+                chart = new Chart("chart", {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            axis: 'y',
+                            data: values,
+                            backgroundColor: 'rgba(0, 113, 227, 0.5)',
+                            borderColor: 'rgb(0, 113, 227)',
+                            borderWidth: 1,
+                            datalabels: {
+                                color: 'white',
+                                anchor: 'start',
+                                align: 'end',
+                                clamp: true
+                            }
+                        }]
                     },
-                    animation: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
+                    plugins: [ChartDataLabels],
+                    options: {
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                position: 'top',
+                                max: 300
+                            }
+                        },
+                        animation: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false }
+                        }
                     }
-                }
-            });
+                });
+            }
 
             document.querySelectorAll('.subheader a').forEach( link => link.classList.remove('active'));
             if (storeId) {
