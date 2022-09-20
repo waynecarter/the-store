@@ -29,7 +29,23 @@
         const storeId = new URL(document.location).searchParams.get("store");
         showOrders(storeId);
 
+        addEventListener('popstate', (event) => {
+            showOrders(event.state.storeId);
+        });
+
         async function showOrders(storeId) {
+            const url = new URL(window.location);
+            if (url.searchParams.get('store') != storeId) {
+                if (storeId) {
+                    url.searchParams.set('store', storeId);
+                } else {
+                    url.searchParams.delete('store');
+                }
+                window.history.pushState({ storeId: storeId }, '', url);
+            } else {
+                window.history.replaceState({ storeId: storeId }, '', url);
+            }
+
             const orders = await app.query.orders(storeId);
             
             const content = document.querySelector('.content');

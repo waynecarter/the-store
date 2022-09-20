@@ -34,7 +34,23 @@
         const storeId = new URL(document.location).searchParams.get("store");
         showInventory(storeId);
 
+        addEventListener('popstate', (event) => {
+            showInventory(event.state.storeId);
+        });
+
         async function showInventory(storeId) {
+            const url = new URL(window.location);
+            if (url.searchParams.get('store') != storeId) {
+                if (storeId) {
+                    url.searchParams.set('store', storeId);
+                } else {
+                    url.searchParams.delete('store');
+                }
+                window.history.pushState({ storeId: storeId }, '', url);
+            } else {
+                window.history.replaceState({ storeId: storeId }, '', url);
+            }
+
             const inventory = await app.query.inventory(storeId);
             const labels = inventory.map( item => `${item.product.name} ${item.product.image}` );
             const values = inventory.map( item => item.quantity );
