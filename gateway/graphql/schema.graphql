@@ -48,9 +48,9 @@ type Query {
     products(search: String, offset: Int, limit: Int): [Product!]
     cart: Cart
     order(id: ID!): Order
-    store(id: ID!): Store
     orders(storeId: ID): [Order!]
     inventory(storeId: ID): [Inventory!]
+    store(id: ID!): Store
 }
 
 type Mutation {
