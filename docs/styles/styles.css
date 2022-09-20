@@ -430,28 +430,36 @@ header > h1 {
     font-size: 1.3em;
 }
 
-/* Order */
+/* Order, Orders */
 
-.content.order table {
+.content.order table,
+.content.orders table {
     font: inherit;
 }
 
-.content.order td:first-child {
+.content.order td:first-child,
+.content.orders td:first-child {
     vertical-align: top;
 }
 
-.content.order td:not(:first-child) {
+.content.order td:not(:first-child),
+.content.orders td:not(:first-child) {
     padding-left: 5px;
 }
 
-.content.order h3 {
+.content.order h3,
+.content.orders h3 {
     font-weight: bold;
     margin: 0;
 }
 
 /* Orders */
 
-.content.orders > div {
-    padding: 20px 0 0 0;
-    border-bottom: solid 2px #ddd;
+.content.orders > div:not(:first-of-type) {
+    padding-top: 20px;
+}
+
+.content.orders > div:not(:last-of-type) {
+    padding-bottom: 20px;
+    border-bottom: solid 1px #ddd;
 }

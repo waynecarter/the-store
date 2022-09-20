@@ -26,8 +26,7 @@
     <script>
         const app = new App();
 
-        const storeId = new URL(document.location).searchParams.get("store");
-        showOrders(storeId);
+        showOrders(new URL(document.location).searchParams.get("store"));
 
         addEventListener('popstate', (event) => {
             showOrders(event.state.storeId);
@@ -47,32 +46,55 @@
             }
 
             const orders = await app.query.orders(storeId);
-            
+
             const content = document.querySelector('.content');
             content.innerHTML = orders.map( order => `
                 <div>
-                    <div><a href="order.html?${order.id}">${order.id}</a></div>
-                    <div>
-                        <select value="${order.status}" onchange="setOrderStatus('${order.id}', this.value)">
-                            <option value="PROCESSING" ${order.status == 'PROCESSING' ? 'selected' : ''}>Processing</option>
-                            <option value="PREPARING_TO_SHIP" ${order.status == 'PREPARING_TO_SHIP' ? 'selected' : ''}>Preparing to Ship</option>
-                            <option value="SHIPPED" ${order.status == 'SHIPPED' ? 'selected' : ''}>Shipped</option>
-                            <option value="PREPARING_FOR_PICKUP" ${order.status == 'PREPARING_FOR_PICKUP' ? 'selected' : ''}>Preparing for Pickup</option>
-                            <option value="READY_FOR_PICKUP" ${order.status == 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
-                            <option value="PICKED_UP" ${order.status == 'PICKED_UP' ? 'selected' : ''}>Picked Up</option>
-                        </select>
-                    </div>
-                    <div>
-                        <ul>
-                            ${
-                                order.items.map( item => `
-                                    <li>${item.product.image} ${item.product.name}${item.count > 1 ? ' ✕ ' + item.count : '' }</li>
-                                `).join('')
-                            }
-                        </ul>
-                    </div>
-                </div>`
-            ).join('');
+                    <table>
+                        ${
+                            !storeId ? `<tr>
+                                <td><h3>Store</h3></td>
+                                <td>${order.store.name}</td>
+                            </tr>` : ''
+                        }
+                        <tr>
+                            <td><h3>Order</h3></td>
+                            <td><a href="order.html?${order.id}">${order.id}</a></td>
+                        </tr>
+                        <tr>
+                            <td><h3>Status</h3></td>
+                            <td>
+                                <select value="${order.status}" onchange="setOrderStatus('${order.id}', this.value)">
+                                    <option value="PROCESSING" ${order.status == 'PROCESSING' ? 'selected' : ''}>Processing</option>
+                                    <option value="PREPARING_TO_SHIP" ${order.status == 'PREPARING_TO_SHIP' ? 'selected' : ''}>Preparing to Ship</option>
+                                    <option value="SHIPPED" ${order.status == 'SHIPPED' ? 'selected' : ''}>Shipped</option>
+                                    <option value="PREPARING_FOR_PICKUP" ${order.status == 'PREPARING_FOR_PICKUP' ? 'selected' : ''}>Preparing for Pickup</option>
+                                    <option value="READY_FOR_PICKUP" ${order.status == 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
+                                    <option value="PICKED_UP" ${order.status == 'PICKED_UP' ? 'selected' : ''}>Picked Up</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h3>Items</h3></td>
+                            <td>` +
+                                order.items.sort( (item1, item2) => {
+                                    if (item1.product.name < item2.product.name) {
+                                        return -1;
+                                    } else if (item1.product.name > item2.product.name) {
+                                        return 1;
+                                    } else {
+                                        return 0;
+                                    }
+                                }).map( item => `
+                                    <div>
+                                        <span>${item.product.image} ${item.product.name} ${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
+                                    </div>`
+                                ).join('') + `
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `).join('');
 
             document.querySelectorAll('.subheader a').forEach( link => link.classList.remove('active'));
             if (storeId) {
@@ -83,7 +105,11 @@
         }
 
         async function setOrderStatus(orderId, status) {
-            app.mutation.setOrderStatus(orderId, status);
+            if (await app.mutation.setOrderStatus(orderId, status)) {
+                showOrders(window.history.state.storeId);
+            } else {
+                alert("Unable to set order status. Try again.");
+            }
         }
     </script>
 </body>

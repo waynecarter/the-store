@@ -162,6 +162,9 @@ class Query {
                 query Orders($storeId: ID) {
                     orders(storeId: $storeId) {
                         id,
+                        store {
+                            name
+                        },
                         status,
                         items {
                             product {
