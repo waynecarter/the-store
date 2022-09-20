@@ -1,5 +1,5 @@
 {
     "password": "password",
-    "admin_roles": ["admin"],
+    "admin_roles": ["admin", "employee"],
     "admin_channels": ["user:admin"]
 }

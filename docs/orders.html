@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Store</title>
+    <title>Orders • Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 
@@ -11,33 +11,64 @@
 
     <link rel="stylesheet" href="styles/styles.css">
     <script src="scripts/app.js"></script>
-    <script src="scripts/chart.js"></script>
 </head>
 
 <body>
     <header>
-        <h1><a href="index.html"><b>The</b> Store</a><span class="title-suffix"/></h1>
+        <h1><a href="index.html"><b>The</b> Store</a></h1>
         <a class="cart" href="cart.html"></a>
     </header>
     <div class="subheader">
-        <h2>Orders</h2>
+        <h2><a href="javascript:showOrders();">Orders</a></h2> <a id="store1-link" href="javascript:showOrders('store1');">Miami</a> • <a id="store2-link" href="javascript:showOrders('store2');">New York</a> • <a id="store3-link" href="javascript:showOrders('store3');">San Francisco</a>
     </div>
-    <div class="content">
-        <div>
-
-        </div>
-    </div>
+    <div class="content orders"></div>
 
     <script>
         const app = new App();
 
-        const storeId = new URL(document.location).searchParams.get("storeId");
-        app.query.orders(storeId).then( orders => {
+        const storeId = new URL(document.location).searchParams.get("store");
+        showOrders(storeId);
+
+        async function showOrders(storeId) {
+            const orders = await app.query.orders(storeId);
+            
             const content = document.querySelector('.content');
-            content.innerHTML = `
-                <pre>${JSON.stringify(orders)}</pre>
-            `;
-        });
+            content.innerHTML = orders.map( order => `
+                <div>
+                    <div><a href="order.html?${order.id}">${order.id}</a></div>
+                    <div>
+                        <select value="${order.status}" onchange="setOrderStatus('${order.id}', this.value)">
+                            <option value="PROCESSING" ${order.status == 'PROCESSING' ? 'selected' : ''}>Processing</option>
+                            <option value="PREPARING_TO_SHIP" ${order.status == 'PREPARING_TO_SHIP' ? 'selected' : ''}>Preparing to Ship</option>
+                            <option value="SHIPPED" ${order.status == 'SHIPPED' ? 'selected' : ''}>Shipped</option>
+                            <option value="PREPARING_FOR_PICKUP" ${order.status == 'PREPARING_FOR_PICKUP' ? 'selected' : ''}>Preparing for Pickup</option>
+                            <option value="READY_FOR_PICKUP" ${order.status == 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
+                            <option value="PICKED_UP" ${order.status == 'PICKED_UP' ? 'selected' : ''}>Picked Up</option>
+                        </select>
+                    </div>
+                    <div>
+                        <ul>
+                            ${
+                                order.items.map( item => `
+                                    <li>${item.product.image} ${item.product.name}${item.count > 1 ? ' ✕ ' + item.count : '' }</li>
+                                `).join('')
+                            }
+                        </ul>
+                    </div>
+                </div>`
+            ).join('');
+
+            document.querySelectorAll('.subheader a').forEach( link => link.classList.remove('active'));
+            if (storeId) {
+                document.querySelector(`.subheader #${storeId}-link`).classList.add('active');
+            } else {
+                document.querySelector('.subheader h2 > a').classList.add('active');
+            }
+        }
+
+        async function setOrderStatus(orderId, status) {
+            app.mutation.setOrderStatus(orderId, status);
+        }
     </script>
 </body>
 

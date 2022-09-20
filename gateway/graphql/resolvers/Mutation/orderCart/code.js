@@ -1,7 +1,7 @@
 function orderCart(context, args, parent, info) {
     var storeId = args.storeId;
     var store = context.user.defaultCollection.get(storeId);
-    if (!store) {
+    if (!store || store.type != 'store') {
         throw('Invalid store.');
     }
     

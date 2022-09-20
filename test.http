@@ -1,4 +1,4 @@
-@user=admin
+@user=jens
 @password=password
 
 ###############
@@ -86,8 +86,9 @@ POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
 X-Request-Type: GraphQL
 
 query {
-    order(id: "order:store1:1662234668516") {
+    order(id: "2ff51aeaf464a2d1cade5ae5b6d882d5") {
         id,
+        status,
         store {
             id,
             name,
@@ -103,6 +104,39 @@ query {
             count
         }
     }
+}
+
+### Get Orders
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+query {
+    orders(storeId: "store2") {
+        id,
+        status,
+        store {
+            id,
+            name,
+            email
+        },
+        items {
+            product {
+                id,
+                name,
+                image,
+                price
+            },
+            count
+        }
+    }
+}
+
+### Set Order Status PROCESSING PREPARING_FOR_PICKUP PICKED_UP
+POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
+X-Request-Type: GraphQL
+
+mutation {
+    setOrderStatus(orderId: "2ff51aeaf464a2d1cade5ae5b6d882d5", status: PREPARING_FOR_PICKUP)
 }
 
 ### Get Inventory

@@ -1,7 +1,9 @@
 function addToCart(context, args, parent, info) {
     var productId = args.productId;
     var product = context.user.defaultCollection.get(productId);
-    if (!product) { return false; }
+    if (!product || product.type != 'product') {
+        return false;
+    }
 
     var cartId = 'cart:' + context.user.name;
     var cart = context.user.defaultCollection.get(cartId) || {

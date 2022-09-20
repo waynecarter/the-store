@@ -31,7 +31,7 @@ type Order {
 type Inventory {
     product: Product!
     store: Store
-    quantity: Float!
+    quantity: Int!
 }
 
 enum OrderStatus {
@@ -49,11 +49,12 @@ type Query {
     cart: Cart
     order(id: ID!): Order
     store(id: ID!): Store
-    orders(storeId: ID!): [Order!]
+    orders(storeId: ID): [Order!]
     inventory(storeId: ID): [Inventory!]
 }
 
 type Mutation {
     addToCart(productId: ID!): Boolean
     orderCart(storeId: ID!): Order
+    setOrderStatus(orderId: ID!, status: OrderStatus!): Boolean
 }

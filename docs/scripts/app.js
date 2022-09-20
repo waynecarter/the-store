@@ -159,7 +159,7 @@ class Query {
     async orders(storeId) {
         const data = await this.#app.graphql({
             query: `
-                query Orders($storeId: ID!) {
+                query Orders($storeId: ID) {
                     orders(storeId: $storeId) {
                         id,
                         status,
@@ -267,7 +267,23 @@ class Mutation {
             this.#onCartChange();
         }
         
-        return data.orderCart;
+        return order;
+    }
+
+    async setOrderStatus(orderId, status) {
+        const data = await this.#app.graphql({
+            query: `
+                mutation SetOrderStatus($orderId: ID!, $status: OrderStatus!) {
+                    setOrderStatus(orderId: $orderId, status: $status)
+                }
+            `,
+            variables: {
+                orderId: orderId,
+                status: status
+            }
+        }) || {};
+        
+        return data.setOrderStatus;
     }
 }
 
