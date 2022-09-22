@@ -12,9 +12,7 @@ function addToCart(context, args, parent, info) {
         customerId: context.user.name
     };
     if (!cart.items) { cart.items = {} };
-
-    var count = cart.items[productId] || 0;
-    cart.items[productId] = count + 1;
+    cart.items[productId] = (cart.items[productId] || 0) + 1;
     
     context.admin.defaultCollection.save(cartId, cart);
 
