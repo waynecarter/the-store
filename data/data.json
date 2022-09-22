@@ -14,7 +14,7 @@
     {"id":"product1","type":"product","name":"Shirt","image":"👕","color":"blue","price":150},
     {"id":"product2","type":"product","name":"Jeans","image":"👖","color":"blue","price":400},
     {"id":"product3","type":"product","name":"Blouse","image":"👚","color":"pink","price":150},
-    {"id":"product4","type":"product","name":"Dress","image":"👗","color":["blue", "red"],"price":400},
+    {"id":"product4","type":"product","name":"Dress","image":"👗","color":["green", "red"],"price":400},
     {"id":"product5","type":"product","name":"Shorts","image":"🩳","color":["orange", "white", "red"],"price":300},
     {"id":"product6","type":"product","name":"Swimsuit","image":"🩱","color":["green", "white"],"price":300},
     {"id":"product7","type":"product","name":"Briefs","image":"🩲","color":"green","price":200},
