@@ -434,6 +434,23 @@ header > a.cart {
     font-size: 1.3em;
 }
 
+/* Stores */
+
+.content.stores {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.content.stores > div {
+    white-space: nowrap;
+    margin: 10px 0;
+}
+
 /* Order, Orders */
 
 .content.order table,
