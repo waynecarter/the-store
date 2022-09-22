@@ -66,11 +66,14 @@
                     <tr>
                         <td><h3>Items</h3></td>
                         <td>` +
-                            order.items.map( item => `
+                            order.items
+                            .sort( (item1, item2) => item1.product.name.localeCompare(item2.product.name) )
+                            .map( item => `
                                 <div>
                                     <span>${item.product.image} ${item.product.name} ${item.count > 1 ? ' ✕ ' + item.count : ''}</span>
                                 </div>`
-                            ).join('') + `
+                            )
+                            .join('') + `
                         </td>
                     </tr>
                 </table>
