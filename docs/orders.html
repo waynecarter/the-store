@@ -16,23 +16,34 @@
 <body>
     <header>
         <h1><a href="index.html"><b>The</b> Store</a></h1>
-        <a href="inventory.html">Inventory</a>
+        <a href="javascript:inventory()">Inventory</a>
     </header>
     <div class="subheader">
-        <h2><a href="javascript:showOrders();">Orders</a></h2> <a id="store1-link" href="javascript:showOrders('store1');">Miami</a> • <a id="store2-link" href="javascript:showOrders('store2');">New York</a> • <a id="store3-link" href="javascript:showOrders('store3');">San Francisco</a>
+        <h2><a href="javascript:orders()">Orders</a></h2> <a id="store1-link" href="javascript:orders('store1')">Miami</a> • <a id="store2-link" href="javascript:orders('store2')">New York</a> • <a id="store3-link" href="javascript:orders('store3')">San Francisco</a>
     </div>
     <div class="content orders"></div>
 
     <script>
         const app = new App();
 
-        showOrders(new URL(document.location).searchParams.get("store"));
+        orders(new URL(document.location).searchParams.get("store"));
 
         addEventListener('popstate', (event) => {
             showOrders(event.state.storeId);
         });
 
-        async function showOrders(storeId) {
+        function inventory() {
+            const base = new URL(document.location);
+            const storeId = base.searchParams.get('store');
+            const url = new URL('inventory.html', base);
+            if (storeId) {
+                url.searchParams.set('store', storeId);
+            }
+
+            window.location.href = url;
+        }
+
+        async function orders(storeId) {
             const url = new URL(window.location);
             if (url.searchParams.get('store') != storeId) {
                 if (storeId) {
