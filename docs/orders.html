@@ -112,7 +112,7 @@
 
         async function setOrderStatus(orderId, status) {
             if (await app.mutation.setOrderStatus(orderId, status)) {
-                showOrders(window.history.state.storeId);
+                orders(window.history.state.storeId);
             } else {
                 alert("Unable to set order status. Try again.");
             }
