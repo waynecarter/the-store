@@ -21,7 +21,6 @@
       "origin": ["https://waynecarter.github.io"],
       "login_origin": ["https://waynecarter.github.io"],
       "headers": [
-        "Authorization",
         "Content-Type",
         "X-Request-Type"
       ],

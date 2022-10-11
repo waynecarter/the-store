@@ -1,4 +1,4 @@
-function addToCart(context, args, parent, info) {
+function addToCart(parent, args, context, info) {
     var productId = args.productId;
     var product = context.user.defaultCollection.get(productId);
     if (!product || product.type != 'product') {
@@ -14,7 +14,7 @@ function addToCart(context, args, parent, info) {
     if (!cart.items) { cart.items = {} };
     cart.items[productId] = (cart.items[productId] || 0) + 1;
     
-    context.admin.defaultCollection.save(cartId, cart);
+    context.admin.defaultCollection.save(cart, cartId);
 
     return true;
 }

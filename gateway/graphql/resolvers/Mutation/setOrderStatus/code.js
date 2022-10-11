@@ -1,4 +1,4 @@
-function setOrderStatus(context, args, parent, info) {
+function setOrderStatus(parent, args, context, info) {
     var orderId = args.orderId;
     var order = context.user.defaultCollection.get(orderId);
     if (!order || order.type != 'order') {
@@ -8,7 +8,7 @@ function setOrderStatus(context, args, parent, info) {
     context.requireRole(["admin", order.storeId]);
     
     order.status = args.status;
-    context.admin.defaultCollection.save(orderId, order);
+    context.admin.defaultCollection.save(order);
 
     return true;
 }

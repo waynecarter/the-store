@@ -1,4 +1,4 @@
-function items(context, args, order, info) {
+function items(order, args, context, info) {
     var items = [];
     for (var productId in order.items) {
         items.push({

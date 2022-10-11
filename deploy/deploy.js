@@ -288,7 +288,9 @@ async function deploySyncConfig() {
 if (include.functions) { await deployFunctionsConfig(); }
 async function deployFunctionsConfig() {
     var functionsDir = new URL('../gateway/functions/', import.meta.url);
-    var functions = functionsConfigFrom(functionsDir);
+    var functions = {
+        definitions: functionsConfigFrom(functionsDir)
+    }
 
     // Deploy
     const configPath = '/_config/functions';

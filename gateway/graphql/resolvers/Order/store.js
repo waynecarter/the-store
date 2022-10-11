@@ -1,3 +1,3 @@
-function store(context, args, order, info) {
+function store(order, args, context, info) {
     return context.user.defaultCollection.get(order.storeId);
 }

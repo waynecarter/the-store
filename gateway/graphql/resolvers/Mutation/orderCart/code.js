@@ -1,4 +1,4 @@
-function orderCart(context, args, parent, info) {
+function orderCart(parent, args, context, info) {
     var storeId = args.storeId;
     var store = context.user.defaultCollection.get(storeId);
     if (!store || store.type != 'store') {
@@ -18,11 +18,11 @@ function orderCart(context, args, parent, info) {
         items: cart.items,
         status: 'PROCESSING'
     };
-    var orderId = context.admin.defaultCollection.save(null, order);
+    var orderId = context.admin.defaultCollection.save(order);
 
     if (orderId) {
         delete cart.items;
-        context.admin.defaultCollection.save(cartId, cart);
+        context.admin.defaultCollection.save(cart);
 
         order.id = orderId;
         return order;

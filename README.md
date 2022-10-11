@@ -1,1 +1,1 @@
-# the-retail-store
+# the-store

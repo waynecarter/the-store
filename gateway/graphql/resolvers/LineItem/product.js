@@ -1,3 +1,3 @@
-function product(context, args, lineItem, info) {
+function product(lineItem, args, context, info) {
     return context.user.defaultCollection.get(lineItem.productId);
 }

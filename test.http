@@ -1,4 +1,4 @@
-@user=jens
+@user=admin
 @password=password
 
 ###############
@@ -131,7 +131,7 @@ query {
     }
 }
 
-### Set Order Status PROCESSING PREPARING_FOR_PICKUP PICKED_UP
+### Set Order Status
 POST http://{{user}}:{{password}}@localhost:4984/retail/_graphql HTTP/1.1
 X-Request-Type: GraphQL
 
