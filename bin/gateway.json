@@ -1,0 +1,34 @@
+{
+  "bootstrap": {
+    "server": "couchbase://localhost",
+    "username": "admin",
+    "password": "password",
+    "use_tls_server": false
+  },
+  "logging": {
+    "redaction_level": "none",
+    "console": {
+      "enabled": true,
+      "log_level": "info",
+      "log_keys": ["*"]
+    }
+  },
+  "api": {
+    "public_interface": ":4984",
+    "admin_interface": ":4985",
+    "admin_interface_authentication": false,
+    "cors": {
+      "origin": ["https://waynecarter.github.io"],
+      "login_origin": ["https://waynecarter.github.io"],
+      "headers": [
+        "Authorization",
+        "Content-Type",
+        "X-Request-Type"
+      ],
+      "max_age": 1728000
+    }
+  },
+  "unsupported" : {
+    "user_queries" : true
+  }
+}
