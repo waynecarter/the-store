@@ -4,8 +4,8 @@ This project is for previewing Gateway's GraphQL API.
 
 ## Resources
 
+* [Setup Video](https://drive.google.com/file/d/1Lwvt80KGgGwQEpTVKXBYZouxVPXnqwSh/view?usp=sharing)
 * [API Docs](https://docs.google.com/document/d/1sskhijMOlviqhY_AJE7_e7W1ue1J32BCfKLt_PKnzhU/edit#)
-* [API Demo Video](https://drive.google.com/file/d/1j-rlFGMXLG6n-4kKwY_5EFuMmYPongVS/view?usp=sharing)
 
 ## Prerequisites
 
