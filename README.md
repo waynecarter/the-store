@@ -336,16 +336,18 @@ The `roles` directory contains the example *role* configuration. Roles are organ
 
 ```
 roles
-└─ admin.json
+├─ admin.json
+├─ customer.json
+└─ employee.json
 ```
 
-#### admin.json
+#### customer.json
 
-The `admin.json` file contains the example config for the `admin` *user*.
+The `customer.json` file contains the example config for the `customer` *role*.
 
 ```json
 {
-    "admin_channels": ["airports"]
+    "admin_channels": ["products", "stores"]
 }
 ```
 
